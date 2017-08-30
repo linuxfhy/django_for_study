@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from .models import Choice, Question
+from .forms import NameForm
 
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
@@ -50,3 +51,10 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
+def myflow(request):
+    form = NameForm(request.POST)
+    return render(request, 'polls/name.html', {'form':form})
+
+def myflowprocess(request):
+    return HttpResponse("Hello, world. This is form processing result.")
