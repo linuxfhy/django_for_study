@@ -53,7 +53,19 @@ def vote(request, question_id):
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
 def myflow(request):
-    form = NameForm(request.POST)
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = NameForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            return HttpResponse("Hello, world. Thanks for submit.")
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = NameForm()
     return render(request, 'polls/name.html', {'form':form})
 
 def myflowprocess(request):
