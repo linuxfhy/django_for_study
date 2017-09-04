@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 
-class NameForm(forms.Form):
+class NameForm2(forms.Form):
     summary = forms.CharField(label='事件概要', max_length=100)
     priority = forms.CharField(label='重要程度', max_length=100)
     urgency = forms.CharField(label='紧急程度', max_length=100)

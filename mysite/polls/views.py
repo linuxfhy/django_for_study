@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from .models import Choice, Question
-from .forms import NameForm
+from .models import NameForm
 
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
@@ -61,6 +61,7 @@ def myflow(request):
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
+            form.save()
             return HttpResponse("Hello, world. Thanks for submit.")
 
     # if a GET (or any other method) we'll create a blank form

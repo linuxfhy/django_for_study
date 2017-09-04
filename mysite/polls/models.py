@@ -1,6 +1,7 @@
 import datetime
 from django.db import models
 from django.utils import timezone
+from django.forms import ModelForm
 # Create your models here.
 
 
@@ -18,3 +19,16 @@ class Choice(models.Model):
     votes = models.IntegerField(default=0)
     def __str__(self):
         return self.choice_text
+
+class NameModel(models.Model):
+    summary = models.CharField(max_length=200)
+    priority = models.CharField(max_length=200)
+    urgency = models.CharField(max_length=200)
+    current_process = models.CharField(max_length=200)
+    deadline = models.CharField(max_length=200)
+    curent_state = models.CharField(max_length=200)
+
+class NameForm(ModelForm):
+    class Meta:
+        model = NameModel
+        fields = '__all__'#['summary','priority','urgency','current_process','deadline','curent_state']
