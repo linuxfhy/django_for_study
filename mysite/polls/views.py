@@ -61,6 +61,7 @@ def myflow(request):
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
+            #TODO:check model field and database colum
             form.save()
             return HttpResponse("Hello, world. Thanks for submit.")
 
