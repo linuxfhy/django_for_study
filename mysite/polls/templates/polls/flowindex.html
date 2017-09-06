@@ -1,0 +1,10 @@
+{% if latest_namemodel_list %}
+    <table>
+    <tr><td>ID</td><td>Summary</td></tr>
+    {% for namemodel in latest_namemodel_list %}
+        <tr><td><a href="{% url 'polls:detail' namemodel.id %}">question_{{ namemodel.id }}</a></td><td>{{ namemodel.summary }}</td></tr>
+    {% endfor %}
+    </table>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}

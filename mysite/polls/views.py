@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
-from .models import Choice, Question
+from .models import Choice, Question, NameModel
 from .models import NameForm
 
 class IndexView(generic.ListView):
@@ -33,6 +33,14 @@ class DetailView(generic.DetailView):
 class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
+
+class NameModelView(generic.ListView):
+    template_name = 'polls/flowindex.html'
+    context_object_name = 'latest_namemodel_list'
+
+    def get_queryset(self):
+        """Return the last five published questions."""
+        return NameModel.objects.order_by('id')[4:]
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
