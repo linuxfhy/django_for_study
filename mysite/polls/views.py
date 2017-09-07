@@ -40,7 +40,7 @@ class NameModelView(generic.ListView):
 
     def get_queryset(self):
         """Return the last five published questions."""
-        return NameModel.objects.order_by('id')[4:]
+        return NameModel.objects.order_by('id')[:]
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
