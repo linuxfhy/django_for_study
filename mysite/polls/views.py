@@ -59,6 +59,9 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+def myflowdetail(request,model_id):
+    namemodel = get_object_or_404(NameModel, pk=model_id)
+    return render(request, 'polls/flowdetail.html', {'model':namemodel})
 
 def myflow(request):
     if request.method == 'POST':
@@ -71,7 +74,8 @@ def myflow(request):
             # redirect to a new URL:
             #TODO:check model field and database colum
             form.save()
-            return HttpResponse("Hello, world. Thanks for submit.")
+            #return HttpResponse("Hello, world. Thanks for submit.")
+            return HttpResponseRedirect(reverse('polls:myflowindex'))
 
     # if a GET (or any other method) we'll create a blank form
     else:
