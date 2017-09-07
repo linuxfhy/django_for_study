@@ -62,7 +62,9 @@ def vote(request, question_id):
 def myflowdetail(request,model_id):
     namemodel = get_object_or_404(NameModel, pk=model_id)
     model_dict = vars(namemodel) 
-    return render(request, 'polls/flowdetail.html', {'model_dict':model_dict})
+    #form = ArticleForm(initial={'headline': 'Initial headline'}, instance=article)
+    form = NameForm(instance=namemodel)
+    return render(request, 'polls/name.html', {'form':form})
 
 def myflow(request):
     if request.method == 'POST':
@@ -80,7 +82,7 @@ def myflow(request):
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        form = NameForm()
+        form = NameForm(initial={'curent_state': '吃饭'})  #TODO:get init state automatically
     return render(request, 'polls/name.html', {'form':form})
 
 def myflowprocess(request):
