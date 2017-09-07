@@ -1,8 +1,8 @@
 <table>
     {% csrf_token %}
-    {% for field in model.items() %}
+    {% for field,value in model_dict.items %}
         <!--<div class="fieldWrapper">-->
-            <tr><td> {{ field }}<td></tr>
+            <tr><td> {{ field }}</td><td></td>     <td>{{ value }}</td></tr>
             {% if field.help_text %}
             <p class="help">{{ field.help_text|safe }}</p>
             {% endif %}

@@ -61,7 +61,8 @@ def vote(request, question_id):
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 def myflowdetail(request,model_id):
     namemodel = get_object_or_404(NameModel, pk=model_id)
-    return render(request, 'polls/flowdetail.html', {'model':namemodel})
+    model_dict = vars(namemodel) 
+    return render(request, 'polls/flowdetail.html', {'model_dict':model_dict})
 
 def myflow(request):
     if request.method == 'POST':
