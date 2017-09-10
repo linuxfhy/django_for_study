@@ -1,4 +1,5 @@
-<form action="{% url 'polls:myflow' %}" method="post">
+-<form action="{% url 'polls:flowdetail' model_id %}" method="post">
+
 <table>
     {% csrf_token %}
     {% for field in form %}
