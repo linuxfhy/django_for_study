@@ -68,7 +68,7 @@ def myflowdetail(request,model_id):
     else:
         namemodel = get_object_or_404(NameModel, pk=model_id)
         form = NameForm(instance=namemodel)
-        return render(request, 'polls/name.html', {'form':form, 'model_id':model_id})
+        return render(request, 'polls/flowdetail.html', {'form':form, 'model_id':model_id})
 
 def myflow(request):
     if request.method == 'POST':

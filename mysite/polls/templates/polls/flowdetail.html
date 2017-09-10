@@ -1,11 +1,16 @@
+-<form action="{% url 'polls:flowdetail' model_id %}" method="post">
+
 <table>
     {% csrf_token %}
-    {% for field,value in model_dict.items %}
+    {% for field in form %}
         <!--<div class="fieldWrapper">-->
-            <tr><td> {{ field }}</td><td></td>     <td>{{ value }}</td></tr>
+            <tr><td>{{ field.label_tag }}</td><td> {{ field }}<td></tr>
             {% if field.help_text %}
             <p class="help">{{ field.help_text|safe }}</p>
             {% endif %}
         <!--</div>-->
     {% endfor %}
 </table>
+    <input type="submit" value="保存" />
+
+</form>
