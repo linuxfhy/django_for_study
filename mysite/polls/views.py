@@ -86,7 +86,8 @@ def myflow(request):
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        form = NameForm(initial={'curent_state': '吃饭'})  #TODO:get init state automatically
+        init_state = 'chifan' #FSM.FSM_get_init_state()
+        form = NameForm(initial={'curent_state': init_state})
     return render(request, 'polls/name.html', {'form':form})
 
 def myflowprocess(request):

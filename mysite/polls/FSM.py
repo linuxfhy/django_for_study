@@ -1,9 +1,9 @@
 # FSM: Finite State Machine
 FSM_TRANS_TABLE = [
-    {'trigger': 'to_睡觉', 'source': '吃饭', 'dest': '睡觉' },
-    {'trigger': 'to_打豆豆', 'source': '吃饭', 'dest': '打豆豆' },
-    {'trigger': 'to_打豆豆', 'source': '睡觉', 'dest': '打豆豆'},
-    {'trigger': 'to_吃饭', 'source': '打豆豆', 'dest': '吃饭'}]
+    {'trigger': 'to_shuijiao', 'source': 'chifan', 'dest': 'shuijiao' }, #The source state of first line will be regard an init_state 
+    {'trigger': 'to_dadoudou', 'source': 'chifan', 'dest': 'dadoudou' },
+    {'trigger': 'to_dadoudou', 'source': 'shuijiao', 'dest': 'dadoudou'},
+    {'trigger': 'to_chifan', 'source': 'dadoudou', 'dest': 'chifan'}]
 
 class FsmStateTrans:
     def __init__(self, srcstate, desstate, trigger):
