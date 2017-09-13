@@ -5,7 +5,7 @@ from django.views import generic
 from django.utils import timezone
 from .models import Choice, Question, NameModel
 from .models import NameForm
-
+from .FSM import WorkFlowFSM
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
     context_object_name = 'latest_question_list'
@@ -86,7 +86,8 @@ def myflow(request):
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        init_state = 'chifan' #FSM.FSM_get_init_state()
+        workflowfsm = WorkFlowFSM()
+        init_state = workflowfsm.FSM_get_init_state() #FSM.FSM_get_init_state()
         form = NameForm(initial={'curent_state': init_state})
     return render(request, 'polls/name.html', {'form':form})
 

@@ -5,13 +5,13 @@ FSM_TRANS_TABLE = [
     {'trigger': 'to_dadoudou', 'source': 'shuijiao', 'dest': 'dadoudou'},
     {'trigger': 'to_chifan', 'source': 'dadoudou', 'dest': 'chifan'}]
 
-class FsmStateTrans:
+class FsmStateTrans(object):
     def __init__(self, srcstate, desstate, trigger):
         self.srcstate = srcstate
         self.desstate = desstate
         self.trigger = trigger
 
-class FsmState:
+class FsmState(object):
     def __init__(self, name):
         self.name = name
         self.trans = {}
@@ -52,15 +52,30 @@ def get_destination_state(state_list, srcstate, trigger):
 
 
 #Code for init
-G_STATE_LIST = []
-for trans in FSM_TRANS_TABLE:
-    statecase = find_state_by_name(G_STATE_LIST, trans['source'])
-    if statecase == None:
-        statecase = FsmState(trans['source'])
-        G_STATE_LIST.append(statecase)
-    have_trans = find_trans_by_state(G_STATE_LIST, trans['source'], trans['dest'])
-    if have_trans == False:
-        statecase.trans[trans['trigger']] = trans['dest']
+class WorkFlowFSM(object):
+    def __init__(self):
+       self.G_STATE_LIST = []
+       for trans in FSM_TRANS_TABLE:
+           statecase = find_state_by_name(self.G_STATE_LIST, trans['source'])
+           if statecase == None:
+               statecase = FsmState(trans['source'])
+               self.G_STATE_LIST.append(statecase)
+           have_trans = find_trans_by_state(self.G_STATE_LIST, trans['source'], trans['dest'])
+           if have_trans == False:
+               statecase.trans[trans['trigger']] = trans['dest']
+    def FSM_get_init_state(self):
+        return self.G_STATE_LIST[0].name
+
+    def FSM_get_source_state(self):
+        src_list = []
+        for cur_state in self.G_STATE_LIST:
+            src_list.append(cur_state.name)
+        return src_list
+    def FSM_get_triger_and_desstate(self, srcstate):
+        for cur_state in self.G_STATE_LIST:
+            if cur_state.name == srcstate:
+                return cur_state.trans
+        return None
     
 
 #CODE FOR TEST:
@@ -78,17 +93,9 @@ def test_cases():
 #test_cases()
 
 #functions for export
-def FSM_get_init_state():
-    return FSM_TRANS_TABLE[0]['source']
 
-def FSM_get_source_state():
-    src_list = []
-    for cur_state in G_STATE_LIST:
-        src_list.append(cur_state.name)
-    return src_list
 
-def FSM_get_triger_and_desstate(srcstate):
-    for cur_state in G_STATE_LIST:
-        if cur_state.name == srcstate:
-            return cur_state.trans
-    return None
+
+
+
+    
