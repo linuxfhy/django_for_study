@@ -76,6 +76,14 @@ class WorkFlowFSM(object):
             if cur_state.name == srcstate:
                 return cur_state.trans
         return None
+    def FSM_get_trigger(self, srcstate):
+        for cur_state in self.G_STATE_LIST:
+            if cur_state.name == srcstate:
+                trigger_list = []
+                for elmt in cur_state.trans:
+                   trigger_list.append(elmt)
+                return trigger_list
+        return None
     
 
 #CODE FOR TEST:
@@ -93,9 +101,3 @@ def test_cases():
 #test_cases()
 
 #functions for export
-
-
-
-
-
-    

@@ -71,8 +71,8 @@ def myflowdetail(request,model_id):
         namemodel = get_object_or_404(NameModel, pk=model_id)
         form = NameForm(instance=namemodel)
         #TODO:Add code for state trans here
-        trans = workflowfsm.FSM_get_triger_and_desstate(namemodel.curent_state)
-        return render(request, 'polls/flowdetail.html', {'form':form, 'model_id':model_id,'trans':trans})
+        triggerlist = workflowfsm.FSM_get_trigger(namemodel.curent_state)
+        return render(request, 'polls/flowdetail.html', {'form':form, 'model_id':model_id,'trigger':triggerlist})
 
 def myflow(request):
     if request.method == 'POST':
