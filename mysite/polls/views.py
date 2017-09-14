@@ -60,15 +60,19 @@ def vote(request, question_id):
         # user hits the Back button.
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 def myflowdetail(request,model_id):
+    workflowfsm = WorkFlowFSM()
     if request.method == 'POST':
         model_instance = NameModel.objects.get(pk=model_id)
         form_instance = NameForm(request.POST, instance=model_instance)
+        #TODO:Add code for state trans here
         form_instance.save()
         return HttpResponseRedirect(reverse('polls:myflowindex'))
     else:
         namemodel = get_object_or_404(NameModel, pk=model_id)
         form = NameForm(instance=namemodel)
-        return render(request, 'polls/flowdetail.html', {'form':form, 'model_id':model_id})
+        #TODO:Add code for state trans here
+        trans = workflowfsm.FSM_get_triger_and_desstate(namemodel.curent_state)
+        return render(request, 'polls/flowdetail.html', {'form':form, 'model_id':model_id,'trans':trans})
 
 def myflow(request):
     if request.method == 'POST':
