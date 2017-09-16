@@ -66,6 +66,9 @@ def myflowdetail(request,model_id):
         form_instance = NameForm(request.POST, instance=model_instance)
         #TODO:Add code for state trans here
         form_instance.save()
+        trigger = request.POST['trigger']
+        model_instance.curent_state = workflowfsm.FSM_get_triger_and_desstate(model_instance.curent_state)[trigger]
+        model_instance.save()
         return HttpResponseRedirect(reverse('polls:myflowindex'))
     else:
         namemodel = get_object_or_404(NameModel, pk=model_id)
