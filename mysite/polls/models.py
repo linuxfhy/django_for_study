@@ -32,4 +32,6 @@ class NameForm(ModelForm):
     class Meta:
         model = NameModel
         fields = '__all__'#['summary','priority','urgency','current_process','deadline','curent_state']
+        labels = {'summary':'概要','priority':'重要性','urgency':'紧急性',
+		          'current_process':'处理进展','deadline':'截止时间','curent_state':'当前状态'}
 
