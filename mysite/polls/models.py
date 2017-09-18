@@ -32,3 +32,4 @@ class NameForm(ModelForm):
     class Meta:
         model = NameModel
         fields = '__all__'#['summary','priority','urgency','current_process','deadline','curent_state']
+

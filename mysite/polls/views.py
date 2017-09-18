@@ -73,6 +73,7 @@ def myflowdetail(request,model_id):
     else:
         namemodel = get_object_or_404(NameModel, pk=model_id)
         form = NameForm(instance=namemodel)
+        form.fields['curent_state'].widget.attrs['readonly'] = True
         #TODO:Add code for state trans here
         triggerlist = workflowfsm.FSM_get_trigger(namemodel.curent_state)
         return render(request, 'polls/flowdetail.html', {'form':form, 'model_id':model_id,'trigger':triggerlist})
