@@ -26,10 +26,11 @@ class NameModel(models.Model):
     urgency = models.CharField(max_length=200, verbose_name="紧急性")
     current_process = models.CharField(max_length=200, verbose_name="处理进展")
     deadline = models.CharField(max_length=200, verbose_name="截止时间")
-    curent_state = models.CharField(max_length=200, verbose_name="当前状态")
-    processer_1st = models.CharField(max_length=200, default="", verbose_name="当前环节处理人")
+    assigned_to   = models.CharField(max_length=200, default="", verbose_name="当前处理人")
+    processer_1st = models.CharField(max_length=200, default="", verbose_name="第一环节处理人")
     processer_2nd = models.CharField(max_length=200, default="", verbose_name="第二环节处理人")
     processer_3rd = models.CharField(max_length=200, default="", verbose_name="第三环节处理人")
+    curent_state = models.CharField(max_length=200, verbose_name="当前状态")
 
 
 class NameForm(ModelForm):

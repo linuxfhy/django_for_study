@@ -59,14 +59,27 @@ def vote(request, question_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
+def excute_trans_action(model_instance, after_trans_action):
+    if 'assign_to' in after_trans_action:
+        for field in model_instance._meta.get_fields():
+            if field.verbose_name == after_trans_action['assign_to']:
+                attr_value = getattr(model_instance, field.name)
+        model_instance.assigned_to = attr_value
+
 def myflowdetail(request,model_id):
     workflowfsm = WorkFlowFSM()
     if request.method == 'POST':
         model_instance = NameModel.objects.get(pk=model_id)
         form_instance = NameForm(request.POST, instance=model_instance)
-        #TODO:Add code for state trans here
+        #Done:Add code for state trans here
         form_instance.save()
         trigger = request.POST['trigger']
+
+        #TODO:Add code for excute after_trans_action
+        after_trans_action = workflowfsm.FSM_get_trans_action(model_instance.curent_state, trigger)
+        excute_trans_action(model_instance, after_trans_action)
+
         model_instance.curent_state = workflowfsm.FSM_get_triger_and_desstate(model_instance.curent_state)[trigger]
         model_instance.save()
         return HttpResponseRedirect(reverse('polls:myflowindex'))
@@ -74,7 +87,7 @@ def myflowdetail(request,model_id):
         namemodel = get_object_or_404(NameModel, pk=model_id)
         form = NameForm(instance=namemodel)
         form.fields['curent_state'].widget.attrs['readonly'] = True
-        #TODO:Add code for state trans here
+        #Done:Add code for state trans here
         triggerlist = workflowfsm.FSM_get_trigger(namemodel.curent_state)
         return render(request, 'polls/flowdetail.html', {'form':form, 'model_id':model_id,'trigger':triggerlist})
 

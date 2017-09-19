@@ -1,6 +1,6 @@
 # FSM: Finite State Machine
 trans1_action = {}
-chifan_dadoudou_action = {'assign_to':'XX环节处理人','send_mail_to':'XX字段' }
+chifan_dadoudou_action = {'assign_to':'概要','send_mail_to':'XX字段' }
 trans3_action = {}
 trans4_action = {}
 
