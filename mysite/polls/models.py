@@ -21,17 +21,18 @@ class Choice(models.Model):
         return self.choice_text
 
 class NameModel(models.Model):
-    summary = models.CharField(max_length=200)
-    priority = models.CharField(max_length=200)
-    urgency = models.CharField(max_length=200)
-    current_process = models.CharField(max_length=200)
-    deadline = models.CharField(max_length=200)
-    curent_state = models.CharField(max_length=200)
+    summary = models.CharField(max_length=200, verbose_name="概要")
+    priority = models.CharField(max_length=200, verbose_name="重要性")
+    urgency = models.CharField(max_length=200, verbose_name="紧急性")
+    current_process = models.CharField(max_length=200, verbose_name="处理进展")
+    deadline = models.CharField(max_length=200, verbose_name="截止时间")
+    curent_state = models.CharField(max_length=200, verbose_name="当前状态")
+    processer_1st = models.CharField(max_length=200, default="", verbose_name="当前环节处理人")
+    processer_2nd = models.CharField(max_length=200, default="", verbose_name="第二环节处理人")
+    processer_3rd = models.CharField(max_length=200, default="", verbose_name="第三环节处理人")
+
 
 class NameForm(ModelForm):
     class Meta:
         model = NameModel
         fields = '__all__'#['summary','priority','urgency','current_process','deadline','curent_state']
-        labels = {'summary':'概要','priority':'重要性','urgency':'紧急性',
-		          'current_process':'处理进展','deadline':'截止时间','curent_state':'当前状态'}
-

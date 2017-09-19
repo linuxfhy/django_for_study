@@ -1,9 +1,14 @@
 # FSM: Finite State Machine
+trans1_action = {}
+chifan_dadoudou_action = {'assign_to':'XX环节处理人','send_mail_to':'XX字段' }
+trans3_action = {}
+trans4_action = {}
+
 FSM_TRANS_TABLE = [
-    {'trigger': 'to_shuijiao', 'source': 'chifan', 'dest': 'shuijiao' }, #The source state of first line will be regard an init_state 
-    {'trigger': 'to_dadoudou', 'source': 'chifan', 'dest': 'dadoudou' },
-    {'trigger': 'to_dadoudou', 'source': 'shuijiao', 'dest': 'dadoudou'},
-    {'trigger': 'to_chifan', 'source': 'dadoudou', 'dest': 'chifan'}]
+    {'source': 'chifan',	'trigger': 'to_shuijiao',	'dest': 'shuijiao',	'trans_action':trans1_action}, #The source state of first line will be regard an init_state 
+    {'source': 'chifan',	'trigger': 'to_dadoudou', 	'dest': 'dadoudou',	'trans_action':chifan_dadoudou_action}, #the value of assign_to here should be
+    {'source': 'shuijiao',	'trigger': 'to_dadoudou', 	'dest': 'dadoudou',	'trans_action':trans3_action},
+    {'source': 'dadoudou',	'trigger': 'to_chifan', 	'dest': 'chifan',	'trans_action':trans4_action} ]
 
 class FsmStateTrans(object):
     def __init__(self, srcstate, desstate, trigger):
@@ -84,6 +89,10 @@ class WorkFlowFSM(object):
                    trigger_list.append(elmt)
                 return trigger_list
         return None
+    def FSM_get_trans_action(self, srcstate, trigger):
+        for trans in FSM_TRANS_TABLE:
+            if trans['source'] == srcstate and trans['trigger'] == trigger:
+                return trans['trans_action'] 
     
 
 #CODE FOR TEST:
