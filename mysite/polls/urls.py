@@ -13,6 +13,6 @@ urlpatterns = [
     url(r'^[0-9]+/flow/(?P<model_id>[0-9]+)/detail/$', views.myflowdetail, name='flowdetail'),
     url(r'^[0-9]+/flow/index$', views.NameModelView.as_view(), name='myflowindex'),
     url(r'^[0-9]+/flow/tmp$', views.myflowprocess, name='myflowprocess'),
-	url(r'^[0-9]+/flow/regist$', views.regist, name='regist'),
-	url(r'^[0-9]+/flow/login$', views.login, name='login'),
+	url(r'^[0-9]+/flow/regist$', views.flowregist, name='flowregist'),
+	url(r'^[0-9]+/flow/login$', views.flowlogin, name='flowlogin'),
 ]

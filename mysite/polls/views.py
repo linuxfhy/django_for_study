@@ -7,7 +7,7 @@ from .models import Choice, Question, NameModel, UserModel
 from .models import NameForm, UserForm
 from .FSM import WorkFlowFSM
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 
 
 class IndexView(generic.ListView):
@@ -119,7 +119,7 @@ def myflow(request):
 def myflowprocess(request):
     return HttpResponse("Hello, world. This is form processing result.")
 
-def regist(request):
+def flowregist(request):
     if request.method == 'POST':
         userform = UserForm(request.POST)
         if userform.is_valid():
@@ -133,7 +133,7 @@ def regist(request):
         userform = UserForm()
     return render(request, 'polls/flowregist.html',{'form':userform})
 
-def login(request):
+def flowlogin(request):
     if request.method == 'POST':
         userform = UserForm(request.POST)
         if userform.is_valid():
@@ -141,6 +141,7 @@ def login(request):
             password = userform.cleaned_data['password']
             user = authenticate(username=username, password=password)
             if user is not None:
+                login(request, user)
                 return HttpResponse('login in!!!')# A backend authenticated the credentials
             else:
                 # No backend authenticated the credentials
