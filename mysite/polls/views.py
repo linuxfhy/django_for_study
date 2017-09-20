@@ -3,9 +3,13 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
-from .models import Choice, Question, NameModel
-from .models import NameForm
+from .models import Choice, Question, NameModel, UserModel
+from .models import NameForm, UserForm
 from .FSM import WorkFlowFSM
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+
+
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
     context_object_name = 'latest_question_list'
@@ -114,3 +118,33 @@ def myflow(request):
 
 def myflowprocess(request):
     return HttpResponse("Hello, world. This is form processing result.")
+
+def regist(request):
+    if request.method == 'POST':
+        userform = UserForm(request.POST)
+        if userform.is_valid():
+            username = userform.cleaned_data['username']
+            email = userform.cleaned_data['email']
+            password = userform.cleaned_data['password']
+            user = User.objects.create_user(username, email, password)
+            user.save()
+            return HttpResponse('regist success!!!')
+    else:
+        userform = UserForm()
+    return render(request, 'polls/flowregist.html',{'form':userform})
+
+def login(request):
+    if request.method == 'POST':
+        userform = UserForm(request.POST)
+        if userform.is_valid():
+            username = userform.cleaned_data['username']
+            password = userform.cleaned_data['password']
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                return HttpResponse('login in!!!')# A backend authenticated the credentials
+            else:
+                # No backend authenticated the credentials
+                return HttpResponse('login fail!!!')
+    else:
+        userform = UserForm()
+    return render(request, 'polls/flowlogin.html',{'form':userform})

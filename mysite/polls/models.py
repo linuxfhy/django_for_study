@@ -2,6 +2,7 @@ import datetime
 from django.db import models
 from django.utils import timezone
 from django.forms import ModelForm
+from django import forms
 # Create your models here.
 
 
@@ -32,8 +33,20 @@ class NameModel(models.Model):
     processer_3rd = models.CharField(max_length=200, default="", verbose_name="第三环节处理人")
     curent_state = models.CharField(max_length=200, verbose_name="当前状态")
 
+class UserModel(models.Model):
+    username = models.CharField(max_length=50)
+    password = models.CharField(max_length=50)
+    email = models.EmailField()
 
 class NameForm(ModelForm):
     class Meta:
         model = NameModel
         fields = '__all__'#['summary','priority','urgency','current_process','deadline','curent_state']
+
+class UserForm(ModelForm):
+    class Meta:
+        model = UserModel
+        fields = '__all__'
+        widgets = {
+            'password': forms.PasswordInput()
+        }

@@ -1,0 +1,17 @@
+<form action="{% url 'polls:regist' %}" method="post">
+
+<table>
+    {% csrf_token %}
+    {% for field in form %}
+        <!--<div class="fieldWrapper">-->
+            <tr><td>{{ field.label_tag }}</td><td> {{ field }}<td></tr>
+            {% if field.help_text %}
+            <p class="help">{{ field.help_text|safe }}</p>
+            {% endif %}
+        <!--</div>-->
+    {% endfor %}
+</table>
+    <input type="submit" value="保存" />
+
+</form>
+
