@@ -44,7 +44,7 @@ class NameModelView(generic.ListView):
 
     def get_queryset(self):
         """Return the last five published questions."""
-        return NameModel.objects.order_by('id')[:]
+        return NameModel.objects.filter(assigned_to=self.request.user).order_by('id')[:]
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
@@ -112,12 +112,12 @@ def myflow(request):
     else:
         workflowfsm = WorkFlowFSM()
         init_state = workflowfsm.FSM_get_init_state() 
-        created_by = request.user.username
-        form = NameForm(initial={'curent_state':init_state, 'created_by':created_by})
+        current_user = request.user.username
+        form = NameForm(initial={'curent_state':init_state, 'created_by':current_user, 'assigned_to':current_user})
         form.fields['created_by'].widget.attrs['readonly'] = True
         form.fields['curent_state'].widget.attrs['readonly'] = True
         form.fields['assigned_to'].widget.attrs['readonly'] = True
-        return render(request, 'polls/name.html', {'form':form})
+    return render(request, 'polls/name.html', {'form':form})
 
 def myflowprocess(request):
     return HttpResponse("Hello, world. This is form processing result.")
