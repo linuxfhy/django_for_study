@@ -44,7 +44,8 @@ class NameModelView(generic.ListView):
 
     def get_queryset(self):
         """Return the last five published questions."""
-        return NameModel.objects.filter(assigned_to=self.request.user).order_by('id')[:]
+        #return NameModel.objects.filter(assigned_to=self.request.user).order_by('id')[:]
+        return NameModel.objects.order_by('id')[:]
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
@@ -66,10 +67,21 @@ def vote(request, question_id):
 
 def excute_trans_action(model_instance, after_trans_action):
     if 'assign_to' in after_trans_action:
+        field_found = False
         for field in model_instance._meta.get_fields():
             if field.verbose_name == after_trans_action['assign_to']:
                 attr_value = getattr(model_instance, field.name)
-        model_instance.assigned_to = attr_value
+                model_instance.assigned_to = attr_value
+                field_found = True
+                #TODO:ADD CODE FOR PROCESS SERACH FIELD FAIL
+        if field_found == False:
+            return {'func_rc':False, 'error_message':'无法指派给<'+after_trans_action['assign_to']+'>，系统无此字段'}
+        userinfo = User.objects.get(username=attr_value)
+        if userinfo:
+            pass
+        else:
+            return {'func_rc':False, 'error_message':'请给<'+after_trans_action['assign_to']+'>指定合适的人，系统中无此用户'}
+    return{'func_rc':True}
 
 def myflowdetail(request,model_id):
     workflowfsm = WorkFlowFSM()
@@ -82,8 +94,11 @@ def myflowdetail(request,model_id):
 
         #TODO:Add code for excute after_trans_action
         after_trans_action = workflowfsm.FSM_get_trans_action(model_instance.curent_state, trigger)
-        excute_trans_action(model_instance, after_trans_action)
-
+        func_rc_dict = excute_trans_action(model_instance, after_trans_action)
+        print('log for debug:func_rc_dict')
+        print(func_rc_dict)
+        if func_rc_dict['func_rc'] == False:
+            return HttpResponse(func_rc_dict['error_message'])
         model_instance.curent_state = workflowfsm.FSM_get_triger_and_desstate(model_instance.curent_state)[trigger]
         model_instance.save()
         return HttpResponseRedirect(reverse('polls:myflowindex'))
@@ -114,9 +129,6 @@ def myflow(request):
         init_state = workflowfsm.FSM_get_init_state() 
         current_user = request.user.username
         form = NameForm(initial={'curent_state':init_state, 'created_by':current_user, 'assigned_to':current_user})
-        form.fields['created_by'].widget.attrs['readonly'] = True
-        form.fields['curent_state'].widget.attrs['readonly'] = True
-        form.fields['assigned_to'].widget.attrs['readonly'] = True
     return render(request, 'polls/name.html', {'form':form})
 
 def myflowprocess(request):

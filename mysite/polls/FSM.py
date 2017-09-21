@@ -1,17 +1,17 @@
 # FSM: Finite State Machine
-trans_action_1 = {'assign_to':'建议评审人',		'send_mail_to':'XX字段' }
-trans_action_2 = {'assign_to':'创建人(只读)',	'send_mail_to':'XX字段' }
+trans_action_1 = {'assign_to':'改进建议评审人',		'send_mail_to':'XX字段' }
+trans_action_2 = {'assign_to':'改进建议实施人',	'send_mail_to':'XX字段' }
 trans_action_3 = {'assign_to':'创建人(只读)',	'send_mail_to':'XX字段' }
 trans_action_4 = {}
-trans_action_5 = {'assign_to':'建议评审人',		'send_mail_to':'XX字段' }
+trans_action_5 = {'assign_to':'改进建议评审人',		'send_mail_to':'XX字段' }
 trans_action_6 = {}
-trans_action_7 = {'assign_to':'创建人(只读)',	'send_mail_to':'XX字段' }
+trans_action_7 = {'assign_to':'改进建议实施人',	'send_mail_to':'XX字段' }
 
 
 FSM_TRANS_TABLE = [
     {'source': '提交建议',			'trigger': '提交评审',	 		'dest': '改进建议价值评审',	'trans_action':trans_action_1}, #The source state of first line will be regard an init_state 
     {'source': '改进建议价值评审',	'trigger': '评审通过', 	 		'dest': '改进建议实施',		'trans_action':trans_action_2}, #the value of assign_to here should be
-    {'source': '改进建议价值评审',	'trigger': '评审不通过', 		'dest': '无价值建议关闭',	'trans_action':trans_action_3},
+    {'source': '改进建议价值评审',	'trigger': '评审不通过', 		'dest': '提交建议',	        'trans_action':trans_action_3},
 	{'source': '改进建议实施',		'trigger': '更新进展',			'dest': '改进建议实施',		'trans_action':trans_action_4},
 	{'source': '改进建议实施',		'trigger': '实施结果提交评审', 	'dest': '实施结果评审',		'trans_action':trans_action_5},
 	{'source': '实施结果评审',		'trigger': '评审通过', 			'dest': '改进建议落地',		'trans_action':trans_action_6},

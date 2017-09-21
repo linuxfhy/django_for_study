@@ -23,11 +23,11 @@ class Choice(models.Model):
 
 class NameModel(models.Model):
     summary = models.CharField(max_length=200, verbose_name="概要")
-    priority = models.CharField(max_length=200, verbose_name="优先级")
+    detail = models.CharField(max_length=5000, verbose_name="详细描述")
+    current_process = models.CharField(max_length=5000, verbose_name="处理进展",default="##由改进实施人填写##")
     value = models.CharField(max_length=200, verbose_name="改进价值评估")
-    current_process = models.CharField(max_length=200, verbose_name="处理进展")
-    detail = models.CharField(max_length=200, verbose_name="详细描述")
-    processer_2nd = models.CharField(max_length=200, default="", verbose_name="建议评审人")
+    reviewer = models.CharField(max_length=200, default="#提交人填写#", verbose_name="改进建议评审人")
+    executor = models.CharField(max_length=200, default="#由建议评审人指派#", verbose_name="改进建议实施人")
     assigned_to   = models.CharField(max_length=200, default="", verbose_name="当前处理人(只读)")
     created_by = models.CharField(max_length=200, default="", verbose_name="创建人(只读)")
     curent_state = models.CharField(max_length=200, verbose_name="当前状态(只读)")
@@ -40,7 +40,16 @@ class UserModel(models.Model):
 class NameForm(ModelForm):
     class Meta:
         model = NameModel
-        fields = '__all__'#['summary','priority','urgency','current_process','deadline','curent_state']
+        fields = '__all__'
+        widgets = {
+            'summary' : forms.Textarea(attrs={'cols': 80, 'rows': 2}),
+            'value' : forms.TextInput(attrs={'cols': 80, 'rows': 1}),
+            'current_process' : forms.Textarea(attrs={'cols': 80, 'rows': 5}),
+            'detail' : forms.Textarea(attrs={'cols': 80, 'rows': 5}),
+            'assigned_to': forms.TextInput(attrs={'readonly': True}),
+            'created_by': forms.TextInput(attrs={'readonly': True}),
+            'curent_state': forms.TextInput(attrs={'readonly': True}),
+        }
 
 class UserForm(ModelForm):
     class Meta:
