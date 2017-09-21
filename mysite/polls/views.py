@@ -108,13 +108,16 @@ def myflow(request):
             form.save()
             #return HttpResponse("Hello, world. Thanks for submit.")
             return HttpResponseRedirect(reverse('polls:myflowindex'))
-
     # if a GET (or any other method) we'll create a blank form
     else:
         workflowfsm = WorkFlowFSM()
-        init_state = workflowfsm.FSM_get_init_state() #FSM.FSM_get_init_state()
-        form = NameForm(initial={'curent_state': init_state})
-    return render(request, 'polls/name.html', {'form':form})
+        init_state = workflowfsm.FSM_get_init_state() 
+        created_by = request.user.username
+        form = NameForm(initial={'curent_state':init_state, 'created_by':created_by})
+        form.fields['created_by'].widget.attrs['readonly'] = True
+        form.fields['curent_state'].widget.attrs['readonly'] = True
+        form.fields['assigned_to'].widget.attrs['readonly'] = True
+        return render(request, 'polls/name.html', {'form':form})
 
 def myflowprocess(request):
     return HttpResponse("Hello, world. This is form processing result.")

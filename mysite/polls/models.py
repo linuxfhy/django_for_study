@@ -23,15 +23,14 @@ class Choice(models.Model):
 
 class NameModel(models.Model):
     summary = models.CharField(max_length=200, verbose_name="概要")
-    priority = models.CharField(max_length=200, verbose_name="重要性")
-    urgency = models.CharField(max_length=200, verbose_name="紧急性")
+    priority = models.CharField(max_length=200, verbose_name="优先级")
+    value = models.CharField(max_length=200, verbose_name="改进价值评估")
     current_process = models.CharField(max_length=200, verbose_name="处理进展")
-    deadline = models.CharField(max_length=200, verbose_name="截止时间")
-    assigned_to   = models.CharField(max_length=200, default="", verbose_name="当前处理人")
-    processer_1st = models.CharField(max_length=200, default="", verbose_name="第一环节处理人")
-    processer_2nd = models.CharField(max_length=200, default="", verbose_name="第二环节处理人")
-    processer_3rd = models.CharField(max_length=200, default="", verbose_name="第三环节处理人")
-    curent_state = models.CharField(max_length=200, verbose_name="当前状态")
+    detail = models.CharField(max_length=200, verbose_name="详细描述")
+    processer_2nd = models.CharField(max_length=200, default="", verbose_name="建议评审人")
+    assigned_to   = models.CharField(max_length=200, default="", verbose_name="当前处理人(只读)")
+    created_by = models.CharField(max_length=200, default="", verbose_name="创建人(只读)")
+    curent_state = models.CharField(max_length=200, verbose_name="当前状态(只读)")
 
 class UserModel(models.Model):
     username = models.CharField(max_length=50)
