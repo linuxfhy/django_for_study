@@ -35,7 +35,7 @@ class NameModel(models.Model):
 class UserModel(models.Model):
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
-    email = models.EmailField()
+    email = models.EmailField(default="example@example.com")
 
 class NameForm(ModelForm):
     class Meta:

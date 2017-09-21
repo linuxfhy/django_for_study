@@ -145,7 +145,7 @@ def flowlogin(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return HttpResponse('login in!!!')# A backend authenticated the credentials
+                return HttpResponseRedirect(reverse('polls:myflowindex'))# A backend authenticated the credentials
             else:
                 # No backend authenticated the credentials
                 return HttpResponse('login fail!!!')
