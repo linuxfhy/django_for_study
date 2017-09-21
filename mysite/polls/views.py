@@ -44,8 +44,8 @@ class NameModelView(generic.ListView):
 
     def get_queryset(self):
         """Return the last five published questions."""
-        #return NameModel.objects.filter(assigned_to=self.request.user).order_by('id')[:]
-        return NameModel.objects.order_by('id')[:]
+        return NameModel.objects.filter(assigned_to=self.request.user).order_by('id')[:]
+        #return NameModel.objects.order_by('id')[:]
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
@@ -76,11 +76,11 @@ def excute_trans_action(model_instance, after_trans_action):
                 #TODO:ADD CODE FOR PROCESS SERACH FIELD FAIL
         if field_found == False:
             return {'func_rc':False, 'error_message':'无法指派给<'+after_trans_action['assign_to']+'>，系统无此字段'}
-        userinfo = User.objects.get(username=attr_value)
+        userinfo = User.objects.filter(username=attr_value)
         if userinfo:
             pass
         else:
-            return {'func_rc':False, 'error_message':'请给<'+after_trans_action['assign_to']+'>指定合适的人，系统中无此用户'}
+            return {'func_rc':False, 'error_message':'请给<'+after_trans_action['assign_to']+'>指定合适的人，系统中无此用户:'+attr_value}
     return{'func_rc':True}
 
 def myflowdetail(request,model_id):
