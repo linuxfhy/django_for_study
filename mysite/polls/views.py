@@ -137,8 +137,8 @@ def flowregist(request):
             password = userform.cleaned_data['password']
             user = User.objects.create_user(username, email, password)
             user.save()
-            return HttpResponseRedirect(reverse('polls:flowlogin'))
             #return HttpResponse('regist success!!!')
+            return HttpResponseRedirect(reverse('polls:flowlogin'))
     else:
         userform = UserForm()
     return render(request, 'polls/flowregist.html',{'form':userform})
