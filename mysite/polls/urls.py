@@ -15,4 +15,5 @@ urlpatterns = [
     url(r'^[0-9]+/flow/tmp$', views.myflowprocess, name='myflowprocess'),
 	url(r'^[0-9]+/flow/regist$', views.flowregist, name='flowregist'),
 	url(r'^[0-9]+/flow/login$', views.flowlogin, name='flowlogin'),
+    url(r'^[0-9]+/flow/home$', views.flowhome, name='flowhome'),
 ]

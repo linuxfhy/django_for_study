@@ -1,0 +1,11 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}" />
+<ul>
+    <li><a href="{% url 'polls:flowhome' %}">首页</a></li>
+    <li><a href="{% url 'polls:flowregist' %}">注册</a></li>
+    <li><a href="{% url 'polls:flowlogin' %}">登录</a></li>
+    <li><a href="{% url 'polls:myflow' %}">创建问题</a></li>
+    <li><a href="{% url 'polls:myflowindex' %}">问题列表</a></li>
+</ul>
+

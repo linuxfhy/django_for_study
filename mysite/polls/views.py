@@ -73,7 +73,6 @@ def excute_trans_action(model_instance, after_trans_action):
                 attr_value = getattr(model_instance, field.name)
                 model_instance.assigned_to = attr_value
                 field_found = True
-                #TODO:ADD CODE FOR PROCESS SERACH FIELD FAIL
         if field_found == False:
             return {'func_rc':False, 'error_message':'无法指派给<'+after_trans_action['assign_to']+'>，系统无此字段'}
         userinfo = User.objects.filter(username=attr_value)
@@ -91,8 +90,6 @@ def myflowdetail(request,model_id):
         #Done:Add code for state trans here
         form_instance.save()
         trigger = request.POST['trigger']
-
-        #TODO:Add code for excute after_trans_action
         after_trans_action = workflowfsm.FSM_get_trans_action(model_instance.curent_state, trigger)
         func_rc_dict = excute_trans_action(model_instance, after_trans_action)
         print('log for debug:func_rc_dict')
@@ -116,9 +113,6 @@ def myflow(request):
         form = NameForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
-            # process the data in form.cleaned_data as required
-            # ...
-            # redirect to a new URL:
             #TODO:check model field and database colum
             form.save()
             #return HttpResponse("Hello, world. Thanks for submit.")
@@ -138,12 +132,13 @@ def flowregist(request):
     if request.method == 'POST':
         userform = UserForm(request.POST)
         if userform.is_valid():
-            username = userform.cleaned_data['username']
+            username = userform.cleaned_data['username']#TODO:用户名检查，数据库中是否已存在该用户名
             email = userform.cleaned_data['email']
             password = userform.cleaned_data['password']
             user = User.objects.create_user(username, email, password)
             user.save()
-            return HttpResponse('regist success!!!')
+            return HttpResponseRedirect(reverse('polls:flowlogin'))
+            #return HttpResponse('regist success!!!')
     else:
         userform = UserForm()
     return render(request, 'polls/flowregist.html',{'form':userform})
@@ -164,3 +159,6 @@ def flowlogin(request):
     else:
         userform = UserForm()
     return render(request, 'polls/flowlogin.html',{'form':userform})
+
+def flowhome(request):
+    return render(request, 'polls/flowhome.html')
