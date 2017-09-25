@@ -32,24 +32,24 @@ class NameModel(models.Model):
     created_by = models.CharField(max_length=200, default="", verbose_name="创建人(只读)")
     curent_state = models.CharField(max_length=200, verbose_name="当前状态(只读)")
 
-class UserModel(models.Model):
-    username = models.CharField(max_length=50)
-    password = models.CharField(max_length=50)
-    email = models.EmailField(default="example@example.com")
-
 class NameForm(ModelForm):
     class Meta:
         model = NameModel
         fields = '__all__'
         widgets = {
-            'summary' : forms.Textarea(attrs={'cols': 80, 'rows': 2}),
+            'summary' : forms.TextInput(attrs={'size':79}),
             'value' : forms.TextInput(attrs={'cols': 80, 'rows': 1}),
             'current_process' : forms.Textarea(attrs={'cols': 80, 'rows': 5}),
             'detail' : forms.Textarea(attrs={'cols': 80, 'rows': 5}),
-            'assigned_to': forms.TextInput(attrs={'readonly': True}),
+            'assigned_to': forms.TextInput(attrs={'readonly': True,'size':20}),
             'created_by': forms.TextInput(attrs={'readonly': True}),
             'curent_state': forms.TextInput(attrs={'readonly': True}),
         }
+
+class UserModel(models.Model):
+    username = models.CharField(max_length=50)
+    password = models.CharField(max_length=50)
+    email = models.EmailField(default="example@example.com")
 
 class UserForm(ModelForm):
     class Meta:
@@ -58,3 +58,7 @@ class UserForm(ModelForm):
         widgets = {
             'password': forms.PasswordInput()
         }
+
+FormAndModelDict = {
+    'improvement':{'PrjNameZh':'改进建议','PrjModelClass':NameModel,'PrjFormClass':NameForm}
+}

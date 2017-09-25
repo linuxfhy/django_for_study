@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from .models import Choice, Question, NameModel, UserModel
-from .models import NameForm, UserForm
+from .models import NameForm, UserForm, FormAndModelDict
 from .FSM import WorkFlowFSM
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
@@ -47,6 +47,11 @@ class NameModelView(generic.ListView):
         return NameModel.objects.filter(assigned_to=self.request.user).order_by('id')[:]
         #return NameModel.objects.order_by('id')[:]
 
+def flowindex(request, prj_name='improvement'):
+    GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
+    obj_list = GenericModel.objects.filter(assigned_to=request.user).order_by('id')[:]
+    return render(request, 'polls/flowindex.html', {'latest_namemodel_list':obj_list, 'prj_name':prj_name})
+
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     try:
@@ -76,16 +81,15 @@ def excute_trans_action(model_instance, after_trans_action):
         if field_found == False:
             return {'func_rc':False, 'error_message':'无法指派给<'+after_trans_action['assign_to']+'>，系统无此字段'}
         userinfo = User.objects.filter(username=attr_value)
-        if userinfo:
-            pass
-        else:
+        if not userinfo:
             return {'func_rc':False, 'error_message':'请给<'+after_trans_action['assign_to']+'>指定合适的人，系统中无此用户:'+attr_value}
     return{'func_rc':True}
 
-def myflowdetail(request,model_id):
+def myflowdetail(request, model_id, prj_name='improvement'):
     workflowfsm = WorkFlowFSM()
+    GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
     if request.method == 'POST':
-        model_instance = NameModel.objects.get(pk=model_id)
+        model_instance = GenericModel.objects.get(pk=model_id)
         form_instance = NameForm(request.POST, instance=model_instance)
         #Done:Add code for state trans here
         form_instance.save()
@@ -96,33 +100,37 @@ def myflowdetail(request,model_id):
             return HttpResponse(func_rc_dict['error_message'])
         model_instance.curent_state = workflowfsm.FSM_get_triger_and_desstate(model_instance.curent_state)[trigger]
         model_instance.save()
-        return HttpResponseRedirect(reverse('polls:myflowindex'))
+        return HttpResponseRedirect(reverse('polls:myflowindex', kwargs={'prj_name':prj_name}))
     else:
-        namemodel = get_object_or_404(NameModel, pk=model_id)
+        namemodel = get_object_or_404(GenericModel, pk=model_id)
         form = NameForm(instance=namemodel)
-        form.fields['curent_state'].widget.attrs['readonly'] = True
         #Done:Add code for state trans here
         triggerlist = workflowfsm.FSM_get_trigger(namemodel.curent_state)
-        return render(request, 'polls/flowdetail.html', {'form':form, 'model_id':model_id,'trigger':triggerlist})
+        return render(request, 'polls/flowdetail.html', {'form':form, 'model_id':model_id,'trigger':triggerlist, 'prj_name':prj_name})
+        #return HttpResponse("hello")
 
-def myflow(request):
+def flow_create_question(request, prj_name='improvement'):
+    print('enter my flow ,project name is %s'%prj_name)
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = NameForm(request.POST)
+        GenericForm = FormAndModelDict[prj_name]['PrjFormClass']
+        form = GenericForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
             #TODO:check model field and database colum
             form.save()
             #return HttpResponse("Hello, world. Thanks for submit.")
-            return HttpResponseRedirect(reverse('polls:myflowindex'))
+            return HttpResponseRedirect(reverse('polls:myflowindex', kwargs={'prj_name':prj_name}))
     # if a GET (or any other method) we'll create a blank form
     else:
         workflowfsm = WorkFlowFSM()
         init_state = workflowfsm.FSM_get_init_state() 
         current_user = request.user.username
-        #TODO:根据项目不同，产生不同的NameForm，学习为下拉框类型字段添加内容，用于增加项目
-        form = NameForm(initial={'curent_state':init_state, 'created_by':current_user, 'assigned_to':current_user})
-    return render(request, 'polls/name.html', {'form':form})
+        #根据项目不同，产生不同的NameForm，学习为下拉框类型字段添加内容，用于增加项目
+        GenericForm = FormAndModelDict[prj_name]['PrjFormClass']
+        #print('project name is %s'%FormAndModelDict[prj_name]['prjname'])
+        form = GenericForm(initial={'curent_state':init_state, 'created_by':current_user, 'assigned_to':current_user})
+    return render(request, 'polls/name.html', {'form':form,'prj_name':prj_name})
 
 def myflowprocess(request):
     return HttpResponse("Hello, world. This is form processing result.")
@@ -134,6 +142,11 @@ def flowregist(request):
             username = userform.cleaned_data['username']#TODO:用户名检查，数据库中是否已存在该用户名
             email = userform.cleaned_data['email']
             password = userform.cleaned_data['password']
+
+            userinfo = User.objects.filter(username=username)
+            if userinfo:
+                return HttpResponse('User name %s has been occupied, please change another usename.'%username)
+
             user = User.objects.create_user(username, email, password)
             user.save()
             #return HttpResponse('regist success!!!')
@@ -151,7 +164,7 @@ def flowlogin(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return HttpResponseRedirect(reverse('polls:myflowindex'))# A backend authenticated the credentials
+                return HttpResponseRedirect(reverse('polls:flowhome'))# A backend authenticated the credentials
             else:
                 # No backend authenticated the credentials
                 return HttpResponse('login fail!!!')
@@ -160,4 +173,9 @@ def flowlogin(request):
     return render(request, 'polls/flowlogin.html',{'form':userform})
 
 def flowhome(request):
-    return render(request, 'polls/flowhome.html')
+    return render(request, 'polls/flowhome.html', {'prj_name':'improvement'})
+
+def flowprjhome(request, prj_name):
+    prj_name_zh = FormAndModelDict[prj_name]['PrjNameZh']
+    return render(request, 'polls/flowprjhome.html',{'prj_name':prj_name,'prj_name_zh':prj_name_zh})
+
