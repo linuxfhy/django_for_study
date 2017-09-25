@@ -92,8 +92,6 @@ def myflowdetail(request,model_id):
         trigger = request.POST['trigger']
         after_trans_action = workflowfsm.FSM_get_trans_action(model_instance.curent_state, trigger)
         func_rc_dict = excute_trans_action(model_instance, after_trans_action)
-        print('log for debug:func_rc_dict')
-        print(func_rc_dict)
         if func_rc_dict['func_rc'] == False:
             return HttpResponse(func_rc_dict['error_message'])
         model_instance.curent_state = workflowfsm.FSM_get_triger_and_desstate(model_instance.curent_state)[trigger]
@@ -122,6 +120,7 @@ def myflow(request):
         workflowfsm = WorkFlowFSM()
         init_state = workflowfsm.FSM_get_init_state() 
         current_user = request.user.username
+        #TODO:根据项目不同，产生不同的NameForm，学习为下拉框类型字段添加内容，用于增加项目
         form = NameForm(initial={'curent_state':init_state, 'created_by':current_user, 'assigned_to':current_user})
     return render(request, 'polls/name.html', {'form':form})
 
