@@ -21,10 +21,24 @@ class Choice(models.Model):
     def __str__(self):
         return self.choice_text
 
+class UserModel(models.Model):
+    username = models.CharField(max_length=50)
+    password = models.CharField(max_length=50)
+    email = models.EmailField(default="example@example.com")
+
+class UserForm(ModelForm):
+    class Meta:
+        model = UserModel
+        fields = '__all__'
+        widgets = {
+            'password': forms.PasswordInput()
+        }
+
 class NameModel(models.Model):
     summary = models.CharField(max_length=200, verbose_name="概要")
     detail = models.CharField(max_length=5000, verbose_name="详细描述")
     current_process = models.CharField(max_length=5000, verbose_name="处理进展",default="##由改进实施人填写##")
+    #viewer_advice = models.CharField(max_length=5000, verbose_name="评审人意见",default="##由评审人填写##")
     value = models.CharField(max_length=200, verbose_name="改进价值评估")
     reviewer = models.CharField(max_length=200, default="#提交人填写#", verbose_name="改进建议评审人")
     executor = models.CharField(max_length=200, default="#由建议评审人指派#", verbose_name="改进建议实施人")
@@ -40,23 +54,11 @@ class NameForm(ModelForm):
             'summary' : forms.TextInput(attrs={'size':79}),
             'value' : forms.TextInput(attrs={'cols': 80, 'rows': 1}),
             'current_process' : forms.Textarea(attrs={'cols': 80, 'rows': 5}),
+            #'viewer_advice' : forms.Textarea(attrs={'cols': 80, 'rows': 5}),
             'detail' : forms.Textarea(attrs={'cols': 80, 'rows': 5}),
             'assigned_to': forms.TextInput(attrs={'readonly': True,'size':20}),
             'created_by': forms.TextInput(attrs={'readonly': True}),
             'curent_state': forms.TextInput(attrs={'readonly': True}),
-        }
-
-class UserModel(models.Model):
-    username = models.CharField(max_length=50)
-    password = models.CharField(max_length=50)
-    email = models.EmailField(default="example@example.com")
-
-class UserForm(ModelForm):
-    class Meta:
-        model = UserModel
-        fields = '__all__'
-        widgets = {
-            'password': forms.PasswordInput()
         }
 
 FormAndModelDict = {

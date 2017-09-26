@@ -1,12 +1,11 @@
 # FSM: Finite State Machine
-trans_action_1 = {'assign_to':'改进建议评审人',		'send_mail_to':'XX字段' }
-trans_action_2 = {'assign_to':'改进建议实施人',	'send_mail_to':'XX字段' }
-trans_action_3 = {'assign_to':'创建人(只读)',	'send_mail_to':'XX字段' }
+trans_action_1 = {'assign_to':'改进建议评审人',    'send_mail_to':'XX字段' }
+trans_action_2 = {'assign_to':'改进建议实施人',    'send_mail_to':'XX字段' }
+trans_action_3 = {'assign_to':'创建人(只读)',      'send_mail_to':'XX字段' }
 trans_action_4 = {}
-trans_action_5 = {'assign_to':'改进建议评审人',		'send_mail_to':'XX字段' }
+trans_action_5 = {'assign_to':'改进建议评审人',    'send_mail_to':'XX字段' }
 trans_action_6 = {}
-trans_action_7 = {'assign_to':'改进建议实施人',	'send_mail_to':'XX字段' }
-
+trans_action_7 = {'assign_to':'改进建议实施人',    'send_mail_to':'XX字段' }
 
 FSM_TRANS_TABLE = [
     {'source': '提交建议',			'trigger': '提交评审',	 		'dest': '改进建议价值评审',	'trans_action':trans_action_1}, #The source state of first line will be regard an init_state 
@@ -16,6 +15,10 @@ FSM_TRANS_TABLE = [
 	{'source': '改进建议实施',		'trigger': '实施结果提交评审', 	'dest': '实施结果评审',		'trans_action':trans_action_5},
 	{'source': '实施结果评审',		'trigger': '评审通过', 			'dest': '改进建议落地',		'trans_action':trans_action_6},
 	{'source': '实施结果评审',		'trigger': '评审不通过',		'dest': '改进建议实施',		'trans_action':trans_action_7}]
+
+TRANS_TABLE_DICT = {
+    'improvement':FSM_TRANS_TABLE
+}
 
 class FsmStateTrans(object):
     def __init__(self, srcstate, desstate, trigger):
@@ -65,9 +68,10 @@ def get_destination_state(state_list, srcstate, trigger):
 
 #Code for init
 class WorkFlowFSM(object):
-    def __init__(self):
+    def __init__(self, prj_name):
        self.G_STATE_LIST = []
-       for trans in FSM_TRANS_TABLE:
+       GENERIC_TRANS_TABLE = TRANS_TABLE_DICT[prj_name]
+       for trans in GENERIC_TRANS_TABLE:
            statecase = find_state_by_name(self.G_STATE_LIST, trans['source'])
            if statecase == None:
                statecase = FsmState(trans['source'])
@@ -96,8 +100,9 @@ class WorkFlowFSM(object):
                    trigger_list.append(elmt)
                 return trigger_list
         return None
-    def FSM_get_trans_action(self, srcstate, trigger):
-        for trans in FSM_TRANS_TABLE:
+    def FSM_get_trans_action(self, prj_name, srcstate, trigger):
+        GENERIC_TRANS_TABLE = TRANS_TABLE_DICT[prj_name]
+        for trans in GENERIC_TRANS_TABLE:
             if trans['source'] == srcstate and trans['trigger'] == trigger:
                 return trans['trans_action'] 
     

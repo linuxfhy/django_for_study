@@ -86,7 +86,7 @@ def excute_trans_action(model_instance, after_trans_action):
     return{'func_rc':True}
 
 def myflowdetail(request, model_id, prj_name='improvement'):
-    workflowfsm = WorkFlowFSM()
+    workflowfsm = WorkFlowFSM(prj_name)
     GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
     if request.method == 'POST':
         model_instance = GenericModel.objects.get(pk=model_id)
@@ -94,7 +94,7 @@ def myflowdetail(request, model_id, prj_name='improvement'):
         #Done:Add code for state trans here
         form_instance.save()
         trigger = request.POST['trigger']
-        after_trans_action = workflowfsm.FSM_get_trans_action(model_instance.curent_state, trigger)
+        after_trans_action = workflowfsm.FSM_get_trans_action(prj_name, model_instance.curent_state, trigger)
         func_rc_dict = excute_trans_action(model_instance, after_trans_action)
         if func_rc_dict['func_rc'] == False:
             return HttpResponse(func_rc_dict['error_message'])
@@ -106,7 +106,8 @@ def myflowdetail(request, model_id, prj_name='improvement'):
         form = NameForm(instance=namemodel)
         #Done:Add code for state trans here
         triggerlist = workflowfsm.FSM_get_trigger(namemodel.curent_state)
-        return render(request, 'polls/flowdetail.html', {'form':form, 'model_id':model_id,'trigger':triggerlist, 'prj_name':prj_name})
+        PrjNameZh = FormAndModelDict[prj_name]['PrjNameZh']
+        return render(request, 'polls/flowdetail.html', {'form':form, 'model_id':model_id,'trigger':triggerlist, 'prj_name':prj_name, 'PrjNameZh':PrjNameZh})
         #return HttpResponse("hello")
 
 def flow_create_question(request, prj_name='improvement'):
@@ -123,14 +124,15 @@ def flow_create_question(request, prj_name='improvement'):
             return HttpResponseRedirect(reverse('polls:myflowindex', kwargs={'prj_name':prj_name}))
     # if a GET (or any other method) we'll create a blank form
     else:
-        workflowfsm = WorkFlowFSM()
+        workflowfsm = WorkFlowFSM(prj_name=prj_name)
         init_state = workflowfsm.FSM_get_init_state() 
         current_user = request.user.username
         #根据项目不同，产生不同的NameForm，学习为下拉框类型字段添加内容，用于增加项目
         GenericForm = FormAndModelDict[prj_name]['PrjFormClass']
         #print('project name is %s'%FormAndModelDict[prj_name]['prjname'])
         form = GenericForm(initial={'curent_state':init_state, 'created_by':current_user, 'assigned_to':current_user})
-    return render(request, 'polls/name.html', {'form':form,'prj_name':prj_name})
+        PrjNameZh = FormAndModelDict[prj_name]['PrjNameZh']
+    return render(request, 'polls/name.html', {'form':form,'prj_name':prj_name, 'PrjNameZh':PrjNameZh})
 
 def myflowprocess(request):
     return HttpResponse("Hello, world. This is form processing result.")
@@ -173,6 +175,7 @@ def flowlogin(request):
     return render(request, 'polls/flowlogin.html',{'form':userform})
 
 def flowhome(request):
+    #TODO:添加当前登录用户显示。让项目名称显示更为灵活
     return render(request, 'polls/flowhome.html', {'prj_name':'improvement'})
 
 def flowprjhome(request, prj_name):
