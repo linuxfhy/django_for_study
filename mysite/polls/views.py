@@ -88,9 +88,10 @@ def excute_trans_action(model_instance, after_trans_action):
 def myflowdetail(request, model_id, prj_name='improvement'):
     workflowfsm = WorkFlowFSM(prj_name)
     GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
+    GenericForm = FormAndModelDict[prj_name]['PrjFormClass']
     if request.method == 'POST':
         model_instance = GenericModel.objects.get(pk=model_id)
-        form_instance = NameForm(request.POST, instance=model_instance)
+        form_instance = GenericForm(request.POST, instance=model_instance)
         #Done:Add code for state trans here
         form_instance.save()
         trigger = request.POST['trigger']
@@ -103,7 +104,7 @@ def myflowdetail(request, model_id, prj_name='improvement'):
         return HttpResponseRedirect(reverse('polls:myflowindex', kwargs={'prj_name':prj_name}))
     else:
         namemodel = get_object_or_404(GenericModel, pk=model_id)
-        form = NameForm(instance=namemodel)
+        form = GenericForm(instance=namemodel)
         #Done:Add code for state trans here
         triggerlist = workflowfsm.FSM_get_trigger(namemodel.curent_state)
         PrjNameZh = FormAndModelDict[prj_name]['PrjNameZh']

@@ -62,7 +62,7 @@ class NameForm(ModelForm):
         }
 
 class DeviceCardModel(models.Model):
-    summary = models.CharField(max_length=200, verbose_name="设备名称")
+    summary = models.CharField(max_length=200, verbose_name="设备描述")
     own_group = models.CharField(max_length=5000, verbose_name="归属小组")
     current_process = models.CharField(max_length=5000, verbose_name="当前使用状态",default="##闲置OR使用##")
     occupied_by = models.CharField(max_length=200, default="#使用人更新#", verbose_name="当前使用人")
