@@ -11,7 +11,7 @@
     {% csrf_token %}
     <tr><td>【项目列表】：</td></tr>
     {% for cur_prj in prj_list %}
-        <tr><td>~~<a href="{% url 'polls:flowprjhome' cur_prj.prj_name %}">{{ cur_prj.prj_name_zh }}</a></td></tr>
+        <tr><td>♦<a href="{% url 'polls:flowprjhome' cur_prj.prj_name %}">{{ cur_prj.prj_name_zh }}</a></td></tr>
     {% endfor %}
 </table>
 
