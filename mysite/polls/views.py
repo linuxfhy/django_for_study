@@ -129,6 +129,7 @@ def flow_create_question(request, prj_name='improvement'):
         current_user = request.user.username
         #根据项目不同，产生不同的NameForm，学习为下拉框类型字段添加内容，用于增加项目
         GenericForm = FormAndModelDict[prj_name]['PrjFormClass']
+        print('GET method ,ZH project name is %s'%FormAndModelDict[prj_name]['PrjNameZh'])
         #print('project name is %s'%FormAndModelDict[prj_name]['prjname'])
         form = GenericForm(initial={'curent_state':init_state, 'created_by':current_user, 'assigned_to':current_user})
         PrjNameZh = FormAndModelDict[prj_name]['PrjNameZh']
@@ -141,7 +142,7 @@ def flowregist(request):
     if request.method == 'POST':
         userform = UserForm(request.POST)
         if userform.is_valid():
-            username = userform.cleaned_data['username']#TODO:用户名检查，数据库中是否已存在该用户名
+            username = userform.cleaned_data['username']
             email = userform.cleaned_data['email']
             password = userform.cleaned_data['password']
 
@@ -176,7 +177,15 @@ def flowlogin(request):
 
 def flowhome(request):
     #TODO:添加当前登录用户显示。让项目名称显示更为灵活
-    return render(request, 'polls/flowhome.html', {'prj_name':'improvement'})
+    class PrjInfo(object):
+        def __init__(self, prj_name, prj_name_zh):
+            self.prj_name = prj_name
+            self.prj_name_zh = prj_name_zh
+    prj_list = []
+    for prj_instance in FormAndModelDict:
+        prj_info_node = PrjInfo(prj_name = prj_instance, prj_name_zh = FormAndModelDict[prj_instance]['PrjNameZh'])
+        prj_list.append(prj_info_node)
+    return render(request, 'polls/flowhome.html', {'prj_list':prj_list})
 
 def flowprjhome(request, prj_name):
     prj_name_zh = FormAndModelDict[prj_name]['PrjNameZh']

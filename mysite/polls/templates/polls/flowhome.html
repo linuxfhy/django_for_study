@@ -5,6 +5,13 @@
     <li><a href="{% url 'polls:flowhome' %}">首页</a></li>
     <li><a href="{% url 'polls:flowregist' %}">注册</a></li>
     <li><a href="{% url 'polls:flowlogin' %}">登录</a></li>
-    <li><a href="{% url 'polls:flowprjhome' prj_name %}">持续改进</a></li>
 </ul>
+
+<table>
+    {% csrf_token %}
+    <tr><td>【项目列表】：</td></tr>
+    {% for cur_prj in prj_list %}
+        <tr><td>~~<a href="{% url 'polls:flowprjhome' cur_prj.prj_name %}">{{ cur_prj.prj_name_zh }}</a></td></tr>
+    {% endfor %}
+</table>
 
