@@ -16,8 +16,9 @@ FSM_TRANS_TABLE = [
 	{'source': '实施结果评审',		'trigger': '评审通过', 			'dest': '改进建议落地',		'trans_action':trans_action_6},
 	{'source': '实施结果评审',		'trigger': '评审不通过',		'dest': '改进建议实施',		'trans_action':trans_action_7}]
 
+device_card_trans_action1 = {'assign_to':'anyone',    'send_mail_to':'XX字段' }
 FSM_TRANS_TABLE_DEVICECARD = [
-    {'source': '设备档案',		'trigger': '更新使用档案',		'dest': '设备档案',		'trans_action':{}}
+    {'source': '设备档案',		'trigger': '更新使用档案',		'dest': '设备档案',		'trans_action':device_card_trans_action1}
 ]
 TRANS_TABLE_DICT = {
     'improvement':FSM_TRANS_TABLE,

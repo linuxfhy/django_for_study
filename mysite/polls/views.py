@@ -8,6 +8,7 @@ from .models import NameForm, UserForm, FormAndModelDict
 from .FSM import WorkFlowFSM
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.db.models import Q
 
 
 class IndexView(generic.ListView):
@@ -55,7 +56,7 @@ def flowindex(request, prj_name='improvement'):
 
 def flow_index_for_current_user(request, prj_name='improvement'):
     GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
-    obj_list = GenericModel.objects.filter(assigned_to=request.user).order_by('id')[:]
+    obj_list = GenericModel.objects.filter( Q(assigned_to=request.user) | Q(assigned_to='anyone')).order_by('id')[:] 
     username = request.user.username
     return render(request, 'polls/flowindex.html', {'latest_namemodel_list':obj_list, 'prj_name':prj_name, 'username':username})
 
@@ -79,17 +80,21 @@ def vote(request, question_id):
 
 def excute_trans_action(model_instance, after_trans_action):
     if 'assign_to' in after_trans_action:
-        field_found = False
-        for field in model_instance._meta.get_fields():
-            if field.verbose_name == after_trans_action['assign_to']:
-                attr_value = getattr(model_instance, field.name)
-                model_instance.assigned_to = attr_value
-                field_found = True
-        if field_found == False:
-            return {'func_rc':False, 'error_message':'无法指派给<'+after_trans_action['assign_to']+'>，系统无此字段'}
-        userinfo = User.objects.filter(username=attr_value)
-        if not userinfo:
-            return {'func_rc':False, 'error_message':'请给<'+after_trans_action['assign_to']+'>指定合适的人，系统中无此用户:'+attr_value}
+        if after_trans_action['assign_to'] == 'anyone':
+            model_instance.assigned_to = 'anyone'
+        else:
+            field_found = False
+            for field in model_instance._meta.get_fields():
+                if field.verbose_name == after_trans_action['assign_to']:
+                    attr_value = getattr(model_instance, field.name)
+                    model_instance.assigned_to = attr_value
+                    field_found = True
+            if field_found == False:
+                return {'func_rc':False, 'error_message':'无法指派给<'+after_trans_action['assign_to']+'>，系统无此字段'}
+            if attr_value != 'anyone':
+                userinfo = User.objects.filter(username=attr_value)
+                if not userinfo:
+                    return {'func_rc':False, 'error_message':'请给<'+after_trans_action['assign_to']+'>指定合适的人，系统中无此用户:'+attr_value}
     return{'func_rc':True}
 
 def myflowdetail(request, model_id, prj_name='improvement'):
@@ -114,7 +119,7 @@ def myflowdetail(request, model_id, prj_name='improvement'):
         form = GenericForm(instance=namemodel)
         #Done:Add code for state trans here
         triggerlist = []
-        if request.user.username == namemodel.assigned_to:
+        if namemodel.assigned_to in [request.user.username ,'anyone']:
             triggerlist = workflowfsm.FSM_get_trigger(namemodel.curent_state)
         PrjNameZh = FormAndModelDict[prj_name]['PrjNameZh']
         return render(request, 'polls/flowdetail.html', {'form':form, 'model_id':model_id,'trigger':triggerlist, 'prj_name':prj_name, 'PrjNameZh':PrjNameZh})
@@ -141,7 +146,7 @@ def flow_create_question(request, prj_name='improvement'):
         GenericForm = FormAndModelDict[prj_name]['PrjFormClass']
         print('GET method ,ZH project name is %s'%FormAndModelDict[prj_name]['PrjNameZh'])
         #print('project name is %s'%FormAndModelDict[prj_name]['prjname'])
-        form = GenericForm(initial={'curent_state':init_state, 'created_by':current_user, 'assigned_to':current_user})
+        form = GenericForm(initial={'curent_state':init_state, 'created_by':current_user, 'assigned_to':'anyone'})
         PrjNameZh = FormAndModelDict[prj_name]['PrjNameZh']
     return render(request, 'polls/name.html', {'form':form,'prj_name':prj_name, 'PrjNameZh':PrjNameZh})
 
@@ -200,7 +205,7 @@ def flowhome(request):
         prj_list = []
         for prj_instance in FormAndModelDict:
             GenericModel = FormAndModelDict[prj_instance]['PrjModelClass']
-            assigned_count = GenericModel.objects.filter(assigned_to=request.user.username).count()
+            assigned_count = GenericModel.objects.filter(Q(assigned_to=request.user.username)|Q(assigned_to='anyone')).count()
             prj_info_node = PrjInfo(prj_name = prj_instance, prj_name_zh = FormAndModelDict[prj_instance]['PrjNameZh'], assigned_count = assigned_count)
             prj_list.append(prj_info_node)
         username = request.user.username
@@ -211,6 +216,6 @@ def flowhome(request):
 def flowprjhome(request, prj_name):
     prj_name_zh = FormAndModelDict[prj_name]['PrjNameZh']
     GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
-    obj_list = GenericModel.objects.filter(assigned_to=request.user.username).order_by('id')[:]
+    obj_list = GenericModel.objects.filter(Q(assigned_to=request.user.username)|Q(assigned_to='anyone')).order_by('id')[:]
     return render(request, 'polls/flowprjhome.html',{'prj_name':prj_name,'prj_name_zh':prj_name_zh, 'obj_list':obj_list})
 
