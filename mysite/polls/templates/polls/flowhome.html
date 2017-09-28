@@ -1,19 +1,18 @@
 {% load static %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}" />
-<ul>
-    <li><a href="{% url 'polls:flowhome' %}">首页</a></li>
-</ul>
+<li><a href="{% url 'polls:flowhome' %}">首页</a></li>
+
 
 {% if prj_list %}
     <table>
         {% csrf_token %}
         {% if username %}
-            <tr><td>Hello, {{ username }}</td></tr>
+            <tr><td>Hello, {{ username }}</td><td>【<a href="{% url 'polls:flowlogout' %}">注销</a>】</td></tr>
         {% endif %}
-        <tr><td>【项目列表】:</td></tr>
+        <tr><td>【项目名称】</td><td>【待处理】</td></tr>
         {% for cur_prj in prj_list %}
-            <tr><td>♦<a href="{% url 'polls:flowprjhome' cur_prj.prj_name %}">{{ cur_prj.prj_name_zh }}</a></td></tr>
+            <tr><td>♦<a href="{% url 'polls:flowprjhome' cur_prj.prj_name %}">{{ cur_prj.prj_name_zh }}</a></td><td>[{{ cur_prj.assigned_count }}]</td></tr>
         {% endfor %}
     </table>
 {% else %}

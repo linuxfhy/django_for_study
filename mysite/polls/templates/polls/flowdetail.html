@@ -1,8 +1,8 @@
 <form action="{% url 'polls:flowdetail' prj_name model_id %}" method="post">
+<p>【当前项目】{{ PrjNameZh }}【ID】question_{{ model_id }}</p>
 
 <table>
     {% csrf_token %}
-    <tr><td>【当前项目:】</td><td>{{ PrjNameZh }}</td><tr>
     {% for field in form %}
         <!--<div class="fieldWrapper">-->
             <tr><td>【{{ field.label_tag }}】</td><td> {{ field }}<td></tr>

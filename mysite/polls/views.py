@@ -7,7 +7,7 @@ from .models import Choice, Question, NameModel, UserModel
 from .models import NameForm, UserForm, FormAndModelDict
 from .FSM import WorkFlowFSM
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 
 class IndexView(generic.ListView):
@@ -185,16 +185,23 @@ def flowlogin(request):
         userform = UserForm()
     return render(request, 'polls/flowlogin.html',{'form':userform})
 
+def flowlogout(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('polls:flowhome'))
+
 def flowhome(request):
     #TODO:添加当前登录用户显示。让项目名称显示更为灵活
     if request.user.is_authenticated():
         class PrjInfo(object):
-            def __init__(self, prj_name, prj_name_zh):
+            def __init__(self, prj_name, prj_name_zh, assigned_count):
                 self.prj_name = prj_name
                 self.prj_name_zh = prj_name_zh
+                self.assigned_count = assigned_count
         prj_list = []
         for prj_instance in FormAndModelDict:
-            prj_info_node = PrjInfo(prj_name = prj_instance, prj_name_zh = FormAndModelDict[prj_instance]['PrjNameZh'])
+            GenericModel = FormAndModelDict[prj_instance]['PrjModelClass']
+            assigned_count = GenericModel.objects.filter(assigned_to=request.user.username).count()
+            prj_info_node = PrjInfo(prj_name = prj_instance, prj_name_zh = FormAndModelDict[prj_instance]['PrjNameZh'], assigned_count = assigned_count)
             prj_list.append(prj_info_node)
         username = request.user.username
         return render(request, 'polls/flowhome.html', {'prj_list':prj_list,'username':username})
