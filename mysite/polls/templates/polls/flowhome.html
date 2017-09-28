@@ -3,15 +3,22 @@
 <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}" />
 <ul>
     <li><a href="{% url 'polls:flowhome' %}">首页</a></li>
-    <li><a href="{% url 'polls:flowregist' %}">注册</a></li>
-    <li><a href="{% url 'polls:flowlogin' %}">登录</a></li>
 </ul>
 
-<table>
-    {% csrf_token %}
-    <tr><td>【项目列表】：</td></tr>
-    {% for cur_prj in prj_list %}
-        <tr><td>♦<a href="{% url 'polls:flowprjhome' cur_prj.prj_name %}">{{ cur_prj.prj_name_zh }}</a></td></tr>
-    {% endfor %}
-</table>
+{% if prj_list %}
+    <table>
+        {% csrf_token %}
+        {% if username %}
+            <tr><td>Hello, {{ username }}</td></tr>
+        {% endif %}
+        <tr><td>【项目列表】:</td></tr>
+        {% for cur_prj in prj_list %}
+            <tr><td>♦<a href="{% url 'polls:flowprjhome' cur_prj.prj_name %}">{{ cur_prj.prj_name_zh }}</a></td></tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>Please Login First. If you don't have an account, please regist first.</p>
+    <li><a href="{% url 'polls:flowregist' %}">注册</a></li>
+    <li><a href="{% url 'polls:flowlogin' %}">登录</a></li>
+{% endif %}
 

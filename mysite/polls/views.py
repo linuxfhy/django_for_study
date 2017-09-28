@@ -49,8 +49,15 @@ class NameModelView(generic.ListView):
 
 def flowindex(request, prj_name='improvement'):
     GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
+    obj_list = GenericModel.objects.order_by('id')[:]
+    username = request.user.username
+    return render(request, 'polls/flowindex.html', {'latest_namemodel_list':obj_list, 'prj_name':prj_name, 'username':username})
+
+def flow_index_for_current_user(request, prj_name='improvement'):
+    GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
     obj_list = GenericModel.objects.filter(assigned_to=request.user).order_by('id')[:]
-    return render(request, 'polls/flowindex.html', {'latest_namemodel_list':obj_list, 'prj_name':prj_name})
+    username = request.user.username
+    return render(request, 'polls/flowindex.html', {'latest_namemodel_list':obj_list, 'prj_name':prj_name, 'username':username})
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
@@ -101,12 +108,14 @@ def myflowdetail(request, model_id, prj_name='improvement'):
             return HttpResponse(func_rc_dict['error_message'])
         model_instance.curent_state = workflowfsm.FSM_get_triger_and_desstate(model_instance.curent_state)[trigger]
         model_instance.save()
-        return HttpResponseRedirect(reverse('polls:myflowindex', kwargs={'prj_name':prj_name}))
+        return HttpResponseRedirect(reverse('polls:PrjIndexForCurUser', kwargs={'prj_name':prj_name}))
     else:
         namemodel = get_object_or_404(GenericModel, pk=model_id)
         form = GenericForm(instance=namemodel)
         #Done:Add code for state trans here
-        triggerlist = workflowfsm.FSM_get_trigger(namemodel.curent_state)
+        triggerlist = []
+        if request.user.username == namemodel.assigned_to:
+            triggerlist = workflowfsm.FSM_get_trigger(namemodel.curent_state)
         PrjNameZh = FormAndModelDict[prj_name]['PrjNameZh']
         return render(request, 'polls/flowdetail.html', {'form':form, 'model_id':model_id,'trigger':triggerlist, 'prj_name':prj_name, 'PrjNameZh':PrjNameZh})
         #return HttpResponse("hello")
@@ -122,7 +131,7 @@ def flow_create_question(request, prj_name='improvement'):
             #TODO:check model field and database colum
             form.save()
             #return HttpResponse("Hello, world. Thanks for submit.")
-            return HttpResponseRedirect(reverse('polls:myflowindex', kwargs={'prj_name':prj_name}))
+            return HttpResponseRedirect(reverse('polls:PrjIndexForCurUser', kwargs={'prj_name':prj_name}))
     # if a GET (or any other method) we'll create a blank form
     else:
         workflowfsm = WorkFlowFSM(prj_name=prj_name)
@@ -178,15 +187,19 @@ def flowlogin(request):
 
 def flowhome(request):
     #TODO:添加当前登录用户显示。让项目名称显示更为灵活
-    class PrjInfo(object):
-        def __init__(self, prj_name, prj_name_zh):
-            self.prj_name = prj_name
-            self.prj_name_zh = prj_name_zh
-    prj_list = []
-    for prj_instance in FormAndModelDict:
-        prj_info_node = PrjInfo(prj_name = prj_instance, prj_name_zh = FormAndModelDict[prj_instance]['PrjNameZh'])
-        prj_list.append(prj_info_node)
-    return render(request, 'polls/flowhome.html', {'prj_list':prj_list})
+    if request.user.is_authenticated():
+        class PrjInfo(object):
+            def __init__(self, prj_name, prj_name_zh):
+                self.prj_name = prj_name
+                self.prj_name_zh = prj_name_zh
+        prj_list = []
+        for prj_instance in FormAndModelDict:
+            prj_info_node = PrjInfo(prj_name = prj_instance, prj_name_zh = FormAndModelDict[prj_instance]['PrjNameZh'])
+            prj_list.append(prj_info_node)
+        username = request.user.username
+        return render(request, 'polls/flowhome.html', {'prj_list':prj_list,'username':username})
+    else:
+        return render(request, 'polls/flowhome.html')
 
 def flowprjhome(request, prj_name):
     prj_name_zh = FormAndModelDict[prj_name]['PrjNameZh']

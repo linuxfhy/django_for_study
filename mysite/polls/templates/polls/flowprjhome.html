@@ -3,8 +3,9 @@
 <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}" />
 <ul>
     <li>当前项目：{{ prj_name_zh }}</li>
-    <li><a href="{% url 'polls:myflow' prj_name %}">创建问题</a></li>
-    <li><a href="{% url 'polls:myflowindex' prj_name %}">问题列表</a></li>
+    <li><a href="{% url 'polls:PrjIndexForCurUser' prj_name %}">待处理条目</a></li>
+    <li><a href="{% url 'polls:myflow' prj_name %}">创建条目</a></li>
+    <li><a href="{% url 'polls:myflowindex' prj_name %}">所有条目</a></li>
     <li><a href="{% url 'polls:flowhome' %}">返回首页</a></li>
 </ul>
 
