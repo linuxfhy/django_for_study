@@ -3,9 +3,26 @@
 <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}" />
 <ul>
     <li>当前项目：{{ prj_name_zh }}</li>
-    <li><a href="{% url 'polls:PrjIndexForCurUser' prj_name %}">待处理条目</a></li>
     <li><a href="{% url 'polls:myflow' prj_name %}">创建条目</a></li>
     <li><a href="{% url 'polls:myflowindex' prj_name %}">所有条目</a></li>
     <li><a href="{% url 'polls:flowhome' %}">返回首页</a></li>
 </ul>
+
+    {% if obj_list %}
+        <table>
+        <tr><td>待处理条目：</td></tr>
+        <tr><td>ID</td><td>概要</td><td>当前状态</td><td>当前处理人</td><td>报告人</td></tr>
+        {% for obj_item in obj_list %}
+            <tr>
+                <td><a href="{% url 'polls:flowdetail' prj_name obj_item.id %}">question_{{ obj_item.id }}</a></td>
+                <td>{{ obj_item.summary }}</td>
+                <td>{{ obj_item.curent_state }}</td>
+                <td>{{ obj_item.assigned_to }}</td>
+                <td>{{ obj_item.created_by }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+    {% else %}
+        <p>待处理条目[0]</p>
+    {% endif %}
 

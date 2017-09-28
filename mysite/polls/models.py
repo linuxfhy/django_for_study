@@ -39,7 +39,7 @@ class NameModel(models.Model):
     detail = models.CharField(max_length=5000, verbose_name="详细描述")
     current_process = models.CharField(max_length=5000, verbose_name="处理进展",default="##由改进实施人填写##")
     #viewer_advice = models.CharField(max_length=5000, verbose_name="评审人意见",default="##由评审人填写##")
-    value = models.CharField(max_length=200, verbose_name="改进价值评估")
+    value = models.CharField(max_length=200, default="0", verbose_name="改进价值评估")
     reviewer = models.CharField(max_length=200, default="#提交人填写#", verbose_name="改进建议评审人")
     executor = models.CharField(max_length=200, default="#由建议评审人指派#", verbose_name="改进建议实施人")
     assigned_to   = models.CharField(max_length=200, default="", verbose_name="当前处理人(只读)")

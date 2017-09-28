@@ -108,7 +108,7 @@ def myflowdetail(request, model_id, prj_name='improvement'):
             return HttpResponse(func_rc_dict['error_message'])
         model_instance.curent_state = workflowfsm.FSM_get_triger_and_desstate(model_instance.curent_state)[trigger]
         model_instance.save()
-        return HttpResponseRedirect(reverse('polls:PrjIndexForCurUser', kwargs={'prj_name':prj_name}))
+        return HttpResponseRedirect(reverse('polls:flowprjhome', kwargs={'prj_name':prj_name}))
     else:
         namemodel = get_object_or_404(GenericModel, pk=model_id)
         form = GenericForm(instance=namemodel)
@@ -210,5 +210,7 @@ def flowhome(request):
 
 def flowprjhome(request, prj_name):
     prj_name_zh = FormAndModelDict[prj_name]['PrjNameZh']
-    return render(request, 'polls/flowprjhome.html',{'prj_name':prj_name,'prj_name_zh':prj_name_zh})
+    GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
+    obj_list = GenericModel.objects.filter(assigned_to=request.user.username).order_by('id')[:]
+    return render(request, 'polls/flowprjhome.html',{'prj_name':prj_name,'prj_name_zh':prj_name_zh, 'obj_list':obj_list})
 
