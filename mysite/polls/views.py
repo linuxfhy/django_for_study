@@ -95,6 +95,15 @@ def excute_trans_action(model_instance, after_trans_action):
                 userinfo = User.objects.filter(username=attr_value)
                 if not userinfo:
                     return {'func_rc':False, 'error_message':'请给<'+after_trans_action['assign_to']+'>指定合适的人，系统中无此用户:'+attr_value}
+    if 'set_fields' in after_trans_action:
+        for field_1 in after_trans_action['set_fields']:
+            field_found = False
+            for field_2 in model_instance._meta.get_fields():
+                if field_2.verbose_name == field_1:
+                    setattr(model_instance, field_2.name, after_trans_action['set_fields'][field_1])
+                    field_found = True
+            if field_found == False:
+                return {'func_rc':False, 'error_message':'无法将<'+field_1+'>设置为:'+after_trans_action['set_fields'][field_1]+'，系统无此字段'}
     return{'func_rc':True}
 
 def myflowdetail(request, model_id, prj_name='improvement'):
@@ -126,7 +135,7 @@ def myflowdetail(request, model_id, prj_name='improvement'):
         #return HttpResponse("hello")
 
 def flow_create_question(request, prj_name='improvement'):
-    print('enter my flow ,project name is %s'%prj_name)
+    #print('enter my flow ,project name is %s'%prj_name)
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         GenericForm = FormAndModelDict[prj_name]['PrjFormClass']
@@ -144,7 +153,7 @@ def flow_create_question(request, prj_name='improvement'):
         current_user = request.user.username
         #根据项目不同，产生不同的NameForm，学习为下拉框类型字段添加内容，用于增加项目
         GenericForm = FormAndModelDict[prj_name]['PrjFormClass']
-        print('GET method ,ZH project name is %s'%FormAndModelDict[prj_name]['PrjNameZh'])
+        #print('GET method ,ZH project name is %s'%FormAndModelDict[prj_name]['PrjNameZh'])
         #print('project name is %s'%FormAndModelDict[prj_name]['prjname'])
         form = GenericForm(initial={'curent_state':init_state, 'created_by':current_user, 'assigned_to':'anyone'})
         PrjNameZh = FormAndModelDict[prj_name]['PrjNameZh']
@@ -205,7 +214,7 @@ def flowhome(request):
         prj_list = []
         for prj_instance in FormAndModelDict:
             GenericModel = FormAndModelDict[prj_instance]['PrjModelClass']
-            assigned_count = GenericModel.objects.filter(Q(assigned_to=request.user.username)|Q(assigned_to='anyone')).count()
+            assigned_count = GenericModel.objects.filter(assigned_to=request.user.username).count()
             prj_info_node = PrjInfo(prj_name = prj_instance, prj_name_zh = FormAndModelDict[prj_instance]['PrjNameZh'], assigned_count = assigned_count)
             prj_list.append(prj_info_node)
         username = request.user.username

@@ -1,4 +1,14 @@
 # FSM: Finite State Machine
+############################################################################################################################################################
+#FSM_TRANS_TABLE：改进建议状态转换表
+#    source：源状态
+#    trigger：触发条件，对应一个按钮
+#    dest：经按钮触发后的目的状态
+#    trans_action：转换后的一些动作，目前有：
+#        assign_to:将问题指派给某个字段对应的处理人，已经支持
+#        set_fields:给某些字段设置给定值，已经支持
+#        send_mail_to:给某人发送邮件，尚不支持
+
 trans_action_1 = {'assign_to':'改进建议评审人',    'send_mail_to':'XX字段' }
 trans_action_2 = {'assign_to':'改进建议实施人',    'send_mail_to':'XX字段' }
 trans_action_3 = {'assign_to':'创建人(只读)',      'send_mail_to':'XX字段' }
@@ -15,16 +25,21 @@ FSM_TRANS_TABLE = [
 	{'source': '改进建议实施',		'trigger': '实施结果提交评审', 	'dest': '实施结果评审',		'trans_action':trans_action_5},
 	{'source': '实施结果评审',		'trigger': '评审通过', 			'dest': '改进建议落地',		'trans_action':trans_action_6},
 	{'source': '实施结果评审',		'trigger': '评审不通过',		'dest': '改进建议实施',		'trans_action':trans_action_7}]
-
-device_card_trans_action1 = {'assign_to':'anyone',    'send_mail_to':'XX字段' }
+############################################################################################################################################################
+#FSM_TRANS_TABLE_DEVICECARD: 设备档案的状态转换表
+device_card_trans_action1 = {'assign_to':'anyone',    'send_mail_to':'XX字段',    'set_fields':{'当前使用状态':'使用中'}}
+device_card_trans_action2 = {'assign_to':'anyone',    'send_mail_to':'XX字段',    'set_fields':{'当前使用状态':'未被占用', '使用人':'无'}}
 FSM_TRANS_TABLE_DEVICECARD = [
-    {'source': '设备档案',		'trigger': '更新使用档案',		'dest': '设备档案',		'trans_action':device_card_trans_action1}
+    {'source': '设备档案',		'trigger': '占用设备',		'dest': '设备档案',		'trans_action':device_card_trans_action1},
+    {'source': '设备档案',		'trigger': '释放设备',		'dest': '设备档案',		'trans_action':device_card_trans_action2}
 ]
+############################################################################################################################################################
+#定义各个项目对应的状态转换表
 TRANS_TABLE_DICT = {
     'improvement':FSM_TRANS_TABLE,
     'device_card':FSM_TRANS_TABLE_DEVICECARD
 }
-
+############################################################################################################################################################
 class FsmStateTrans(object):
     def __init__(self, srcstate, desstate, trigger):
         self.srcstate = srcstate
@@ -45,10 +60,10 @@ def find_state_by_name(state_list, name):
     #print('can not find stae %s'%name)
     return None
 
-def find_trans_by_state(state_list, srcstate, desstate):
+def find_trans_by_state(state_list, srcstate, desstate, trigger):
     for cur_state in state_list:
-        for trigger in cur_state.trans:
-            if cur_state.name == srcstate and cur_state.trans[trigger] == desstate:
+        for trigger_tmp in cur_state.trans:
+            if cur_state.name == srcstate and cur_state.trans[trigger_tmp] == desstate and trigger in cur_state.trans:
                 return True
     return False
 
@@ -81,7 +96,7 @@ class WorkFlowFSM(object):
            if statecase == None:
                statecase = FsmState(trans['source'])
                self.G_STATE_LIST.append(statecase)
-           have_trans = find_trans_by_state(self.G_STATE_LIST, trans['source'], trans['dest'])
+           have_trans = find_trans_by_state(self.G_STATE_LIST, trans['source'], trans['dest'], trans['trigger'])
            if have_trans == False:
                statecase.trans[trans['trigger']] = trans['dest']
     def FSM_get_init_state(self):
