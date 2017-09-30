@@ -81,6 +81,8 @@ def vote(request, question_id):
 def get_attr_value(request, get_method):
     if get_method == 'get_current_user':
         return request.user.username
+def check_trans_condition(request, namemodel, trans_condition):
+    return True
 
 def excute_trans_action(request, model_instance, after_trans_action):
     if 'assign_to' in after_trans_action:
@@ -135,7 +137,7 @@ def myflowdetail(request, model_id, prj_name='improvement'):
         func_rc_dict = excute_trans_action(request, model_instance, after_trans_action)
         if func_rc_dict['func_rc'] == False:
             return HttpResponse(func_rc_dict['error_message'])
-        model_instance.curent_state = workflowfsm.FSM_get_triger_and_desstate(model_instance.curent_state)[trigger]
+        model_instance.curent_state = workflowfsm.FSM_get_triger_and_desstate(model_instance.curent_state)[trigger]['dest']
         model_instance.save()
         #return HttpResponseRedirect(reverse('polls:flowprjhome', kwargs={'prj_name':prj_name}))
         return HttpResponseRedirect(reverse('polls:flowdetail', kwargs={'prj_name':prj_name,'model_id':model_id}))
@@ -145,7 +147,13 @@ def myflowdetail(request, model_id, prj_name='improvement'):
         #Done:Add code for state trans here
         triggerlist = []
         if namemodel.assigned_to in [request.user.username ,'anyone']:
-            triggerlist = workflowfsm.FSM_get_trigger(namemodel.curent_state)
+            triggerlist = workflowfsm.FSM_get_trigger(namemodel.curent_state) #TODO:delete those trigger which doesn't match trans condition
+            triggerlist_cpy = triggerlist[:]
+            for trigger_tmp in triggerlist:
+                trans_condition = workflowfsm.FSM_get_triger_and_desstate(namemodel.curent_state)[trigger_tmp]['condition']
+                if check_trans_condition(request, namemodel, trans_condition) == False:
+                    triggerlist_cpy.remove(trigger_tmp)
+            triggerlist = triggerlist_cpy
         PrjNameZh = FormAndModelDict[prj_name]['PrjNameZh']
         return render(request, 'polls/flowdetail.html', {'form':form, 'model_id':model_id,'trigger':triggerlist, 'prj_name':prj_name, 'PrjNameZh':PrjNameZh})
         #return HttpResponse("hello")

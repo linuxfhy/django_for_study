@@ -19,13 +19,13 @@ trans_action_6 = {}
 trans_action_7 = {'assign_to':'改进建议实施人',    'send_mail_to':'XX字段' }
 
 FSM_TRANS_TABLE = [
-    {'source': '提交建议',			'trigger': '提交评审',	 		'dest': '改进建议价值评审',	'trans_action':trans_action_1}, #The source state of first line will be regard an init_state 
-    {'source': '改进建议价值评审',	'trigger': '评审通过', 	 		'dest': '改进建议实施',		'trans_action':trans_action_2}, #the value of assign_to here should be
-    {'source': '改进建议价值评审',	'trigger': '评审不通过', 		'dest': '提交建议',	        'trans_action':trans_action_3},
-	{'source': '改进建议实施',		'trigger': '更新进展',			'dest': '改进建议实施',		'trans_action':trans_action_4},
-	{'source': '改进建议实施',		'trigger': '实施结果提交评审', 	'dest': '实施结果评审',		'trans_action':trans_action_5},
-	{'source': '实施结果评审',		'trigger': '评审通过', 			'dest': '改进建议落地',		'trans_action':trans_action_6},
-	{'source': '实施结果评审',		'trigger': '评审不通过',		'dest': '改进建议实施',		'trans_action':trans_action_7}]
+    {'source': '提交建议',			'trigger': '提交评审',	 		'dest': '改进建议价值评审',	'trans_condition':{},   'trans_action':trans_action_1}, #The source state of first line will be regard an init_state 
+    {'source': '改进建议价值评审',	'trigger': '指定实施人', 	 	'dest': '改进建议实施',		'trans_condition':{},   'trans_action':trans_action_2}, #the value of assign_to here should be
+    {'source': '改进建议价值评审',	'trigger': '评审不通过', 		'dest': '提交建议',	        'trans_condition':{},   'trans_action':trans_action_3},
+	{'source': '改进建议实施',		'trigger': '更新进展',			'dest': '改进建议实施',		'trans_condition':{},   'trans_action':trans_action_4},
+	{'source': '改进建议实施',		'trigger': '实施结果提交评审', 	'dest': '实施结果评审',		'trans_condition':{},   'trans_action':trans_action_5},
+	{'source': '实施结果评审',		'trigger': '落地关闭', 			'dest': '改进建议落地',		'trans_condition':{},   'trans_action':trans_action_6},
+	{'source': '实施结果评审',		'trigger': '评审不通过',		'dest': '改进建议实施',		'trans_condition':{},   'trans_action':trans_action_7}]
 ############################################################################################################################################################
 #FSM_TRANS_TABLE_DEVICECARD: 设备档案的状态转换表
 device_card_trans_action_occupy = {'assign_to':'anyone',    'send_mail_to':'XX字段',    'set_fields':{'当前使用状态':'使用中'},
@@ -34,9 +34,9 @@ device_card_trans_action_occupy = {'assign_to':'anyone',    'send_mail_to':'XX�
 
 device_card_trans_action_free = {'assign_to':'anyone',    'send_mail_to':'XX字段',    'set_fields':{'当前使用状态':'未被占用', '设备使用人':'无'}}
 FSM_TRANS_TABLE_DEVICECARD = [
-    {'source': '设备档案',		'trigger': '占用设备',		'dest': '设备档案',		'trans_action':device_card_trans_action_occupy},
-    {'source': '设备档案',		'trigger': '释放设备',		'dest': '设备档案',		'trans_action':device_card_trans_action_free},
-    {'source': '设备档案',		'trigger': '更新信息',		'dest': '设备档案',		'trans_action':{}}
+    {'source': '设备档案',		'trigger': '占用设备',		'dest': '设备档案',		'trans_condition':{},   'trans_action':device_card_trans_action_occupy},
+    {'source': '设备档案',		'trigger': '释放设备',		'dest': '设备档案',		'trans_condition':{},   'trans_action':device_card_trans_action_free},
+    {'source': '设备档案',		'trigger': '更新信息',		'dest': '设备档案',		'trans_condition':{},   'trans_action':{}}
 ]
 ############################################################################################################################################################
 #定义各个项目对应的状态转换表
@@ -68,7 +68,7 @@ def find_state_by_name(state_list, name):
 def find_trans_by_state(state_list, srcstate, desstate, trigger):
     for cur_state in state_list:
         for trigger_tmp in cur_state.trans:
-            if cur_state.name == srcstate and cur_state.trans[trigger_tmp] == desstate and trigger in cur_state.trans:
+            if cur_state.name == srcstate and cur_state.trans[trigger_tmp]['dest'] == desstate and trigger in cur_state.trans:
                 return True
     return False
 
@@ -103,7 +103,7 @@ class WorkFlowFSM(object):
                self.G_STATE_LIST.append(statecase)
            have_trans = find_trans_by_state(self.G_STATE_LIST, trans['source'], trans['dest'], trans['trigger'])
            if have_trans == False:
-               statecase.trans[trans['trigger']] = trans['dest']
+               statecase.trans[trans['trigger']] = {'dest':trans['dest'], 'condition':trans['trans_condition']}# replace trans['dest'] with {'dest':trans['dest'], 'condition':trans['condition']}
     def FSM_get_init_state(self):
         return self.G_STATE_LIST[0].name
 
