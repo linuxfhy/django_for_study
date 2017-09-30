@@ -81,7 +81,17 @@ def vote(request, question_id):
 def get_attr_value(request, get_method):
     if get_method == 'get_current_user':
         return request.user.username
-def check_trans_condition(request, namemodel, trans_condition):
+def check_trans_condition(request, model_instance, trans_condition):
+    for field_name in trans_condition:
+        for field_tmp in model_instance._meta.get_fields():
+            if field_tmp.verbose_name == field_name:  #found field
+                attr_value = getattr(model_instance, field_tmp.name)
+                if trans_condition[field_name]['op'] == '!=':
+                    if not attr_value != trans_condition[field_name]['value']:
+                        return False
+                elif trans_condition[field_name]['op'] == '==':
+                    if not attr_value == trans_condition[field_name]['value']:
+                        return False
     return True
 
 def excute_trans_action(request, model_instance, after_trans_action):

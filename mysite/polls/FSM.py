@@ -33,10 +33,13 @@ device_card_trans_action_occupy = {'assign_to':'anyone',    'send_mail_to':'XX�
                              }
 
 device_card_trans_action_free = {'assign_to':'anyone',    'send_mail_to':'XX字段',    'set_fields':{'当前使用状态':'未被占用', '设备使用人':'无'}}
+device_trans_condition_update = {'当前使用状态':{'op':'!=','value':'使用中'}}
+device_trans_condition_occupied = {'当前使用状态':{'op':'!=','value':'使用中'}}
+device_trans_condition_freed = {'当前使用状态':{'op':'==','value':'使用中'}}
 FSM_TRANS_TABLE_DEVICECARD = [
-    {'source': '设备档案',		'trigger': '占用设备',		'dest': '设备档案',		'trans_condition':{},   'trans_action':device_card_trans_action_occupy},
-    {'source': '设备档案',		'trigger': '释放设备',		'dest': '设备档案',		'trans_condition':{},   'trans_action':device_card_trans_action_free},
-    {'source': '设备档案',		'trigger': '更新信息',		'dest': '设备档案',		'trans_condition':{},   'trans_action':{}}
+    {'source': '设备档案',		'trigger': '占用设备',		'dest': '设备档案',		'trans_condition':device_trans_condition_occupied,   'trans_action':device_card_trans_action_occupy},
+    {'source': '设备档案',		'trigger': '释放设备',		'dest': '设备档案',		'trans_condition':device_trans_condition_freed,   'trans_action':device_card_trans_action_free},
+    {'source': '设备档案',		'trigger': '更新信息',		'dest': '设备档案',		'trans_condition':device_trans_condition_update,   'trans_action':{}}
 ]
 ############################################################################################################################################################
 #定义各个项目对应的状态转换表
@@ -134,12 +137,12 @@ class WorkFlowFSM(object):
 
 #CODE FOR TEST:
 def test_cases():
-    for cur_trans in FSM_TRANS_TABLE:
+    for cur_trans in FSM_TRANS_TABLE: #test
         result_dict = get_triger_and_desstate(G_STATE_LIST, cur_trans['source'])
         for dict_elmt in result_dict:
             print("srcstate is %s, trigger is %s, des state is %s"%(cur_trans['source'], dict_elmt, result_dict[dict_elmt]))
 
-    for cur_trans in FSM_TRANS_TABLE:
+    for cur_trans in FSM_TRANS_TABLE: #test
         trigger = get_triger_and_desstate(G_STATE_LIST, cur_trans['source'])
         for trigger_elmt in trigger:
             desstate = get_destination_state(G_STATE_LIST, cur_trans['source'], trigger_elmt)
