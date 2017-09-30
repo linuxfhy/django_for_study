@@ -35,7 +35,8 @@ device_card_trans_action_occupy = {'assign_to':'anyone',    'send_mail_to':'XX�
 device_card_trans_action_free = {'assign_to':'anyone',    'send_mail_to':'XX字段',    'set_fields':{'当前使用状态':'未被占用', '使用人':'无'}}
 FSM_TRANS_TABLE_DEVICECARD = [
     {'source': '设备档案',		'trigger': '占用设备',		'dest': '设备档案',		'trans_action':device_card_trans_action_occupy},
-    {'source': '设备档案',		'trigger': '释放设备',		'dest': '设备档案',		'trans_action':device_card_trans_action_free}
+    {'source': '设备档案',		'trigger': '释放设备',		'dest': '设备档案',		'trans_action':device_card_trans_action_free},
+    {'source': '设备档案',		'trigger': '更新信息',		'dest': '设备档案',		'trans_action':{}}
 ]
 ############################################################################################################################################################
 #定义各个项目对应的状态转换表
