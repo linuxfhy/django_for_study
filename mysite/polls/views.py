@@ -78,7 +78,11 @@ def vote(request, question_id):
         # user hits the Back button.
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
-def excute_trans_action(model_instance, after_trans_action):
+def get_attr_value(request, get_method):
+    if get_method == 'get_current_user':
+        return request.user.username
+
+def excute_trans_action(request, model_instance, after_trans_action):
     if 'assign_to' in after_trans_action:
         if after_trans_action['assign_to'] == 'anyone':
             model_instance.assigned_to = 'anyone'
@@ -104,6 +108,17 @@ def excute_trans_action(model_instance, after_trans_action):
                     field_found = True
             if field_found == False:
                 return {'func_rc':False, 'error_message':'无法将<'+field_1+'>设置为:'+after_trans_action['set_fields'][field_1]+'，系统无此字段'}
+    if 'set_field_nonconstant' in after_trans_action:
+        for field_1 in after_trans_action['set_field_nonconstant']:
+            field_found = False
+            for field_2 in model_instance._meta.get_fields():
+                if field_2.verbose_name == field_1:
+                    get_method = after_trans_action['set_field_nonconstant'][field_1]
+                    attr_value = get_attr_value(request, get_method)
+                    setattr(model_instance, field_2.name, attr_value)
+                    field_found = True
+            if field_found == False:
+                return {'func_rc':False, 'error_message':'无法将<'+field_1+'>设置为:'+attr_value+'，系统无此字段'}
     return{'func_rc':True}
 
 def myflowdetail(request, model_id, prj_name='improvement'):
@@ -117,7 +132,7 @@ def myflowdetail(request, model_id, prj_name='improvement'):
         form_instance.save()
         trigger = request.POST['trigger']
         after_trans_action = workflowfsm.FSM_get_trans_action(prj_name, model_instance.curent_state, trigger)
-        func_rc_dict = excute_trans_action(model_instance, after_trans_action)
+        func_rc_dict = excute_trans_action(request, model_instance, after_trans_action)
         if func_rc_dict['func_rc'] == False:
             return HttpResponse(func_rc_dict['error_message'])
         model_instance.curent_state = workflowfsm.FSM_get_triger_and_desstate(model_instance.curent_state)[trigger]

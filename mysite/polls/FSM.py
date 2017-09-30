@@ -6,8 +6,9 @@
 #    dest：经按钮触发后的目的状态
 #    trans_action：转换后的一些动作，目前有：
 #        assign_to:将问题指派给某个字段对应的处理人，已经支持
-#        set_fields:给某些字段设置给定值，已经支持
 #        send_mail_to:给某人发送邮件，尚不支持
+#        set_fields:给某些字段设置给定值，已经支持
+
 
 trans_action_1 = {'assign_to':'改进建议评审人',    'send_mail_to':'XX字段' }
 trans_action_2 = {'assign_to':'改进建议实施人',    'send_mail_to':'XX字段' }
@@ -27,11 +28,14 @@ FSM_TRANS_TABLE = [
 	{'source': '实施结果评审',		'trigger': '评审不通过',		'dest': '改进建议实施',		'trans_action':trans_action_7}]
 ############################################################################################################################################################
 #FSM_TRANS_TABLE_DEVICECARD: 设备档案的状态转换表
-device_card_trans_action1 = {'assign_to':'anyone',    'send_mail_to':'XX字段',    'set_fields':{'当前使用状态':'使用中'}}
-device_card_trans_action2 = {'assign_to':'anyone',    'send_mail_to':'XX字段',    'set_fields':{'当前使用状态':'未被占用', '使用人':'无'}}
+device_card_trans_action_occupy = {'assign_to':'anyone',    'send_mail_to':'XX字段',    'set_fields':{'当前使用状态':'使用中'},
+                             'set_field_nonconstant':{'使用人':'get_current_user'}
+                             }
+
+device_card_trans_action_free = {'assign_to':'anyone',    'send_mail_to':'XX字段',    'set_fields':{'当前使用状态':'未被占用', '使用人':'无'}}
 FSM_TRANS_TABLE_DEVICECARD = [
-    {'source': '设备档案',		'trigger': '占用设备',		'dest': '设备档案',		'trans_action':device_card_trans_action1},
-    {'source': '设备档案',		'trigger': '释放设备',		'dest': '设备档案',		'trans_action':device_card_trans_action2}
+    {'source': '设备档案',		'trigger': '占用设备',		'dest': '设备档案',		'trans_action':device_card_trans_action_occupy},
+    {'source': '设备档案',		'trigger': '释放设备',		'dest': '设备档案',		'trans_action':device_card_trans_action_free}
 ]
 ############################################################################################################################################################
 #定义各个项目对应的状态转换表
