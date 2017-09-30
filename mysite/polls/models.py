@@ -65,8 +65,8 @@ class DeviceCardModel(models.Model):
     summary = models.CharField(max_length=200, verbose_name="设备描述")
     device_info = models.CharField(max_length=2000, verbose_name="设备信息", default="【归属小组】:")
     current_process = models.CharField(max_length=200, verbose_name="当前使用状态",default="##闲置OR使用##")
-    occupied_by = models.CharField(max_length=200, default="#使用人更新#", verbose_name="使用人")
-    assigned_to   = models.CharField(max_length=200, default="", verbose_name="当前处理人(只读)")
+    occupied_by = models.CharField(max_length=200, default="#使用人更新#", verbose_name="设备使用人")
+    assigned_to   = models.CharField(max_length=200, default="", verbose_name="分配给(只读)")
     created_by = models.CharField(max_length=200, default="", verbose_name="创建人(只读)")
     curent_state = models.CharField(max_length=200, verbose_name="当前状态(只读)")
 
@@ -74,7 +74,7 @@ class DeviceCardForm(ModelForm):
     class Meta:
         model = DeviceCardModel
         fields = '__all__'
-        exclude = ['curent_state','created_by', 'assigned_to']
+        exclude = []#['curent_state','created_by']
         widgets = {
             'summary' : forms.TextInput(attrs={'size':50}),
             'device_info':forms.Textarea(attrs={'cols': 52, 'rows': 5}),

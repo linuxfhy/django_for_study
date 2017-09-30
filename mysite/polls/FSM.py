@@ -29,10 +29,10 @@ FSM_TRANS_TABLE = [
 ############################################################################################################################################################
 #FSM_TRANS_TABLE_DEVICECARD: 设备档案的状态转换表
 device_card_trans_action_occupy = {'assign_to':'anyone',    'send_mail_to':'XX字段',    'set_fields':{'当前使用状态':'使用中'},
-                             'set_field_nonconstant':{'使用人':'get_current_user'}
+                             'set_field_nonconstant':{'设备使用人':'get_current_user'}
                              }
 
-device_card_trans_action_free = {'assign_to':'anyone',    'send_mail_to':'XX字段',    'set_fields':{'当前使用状态':'未被占用', '使用人':'无'}}
+device_card_trans_action_free = {'assign_to':'anyone',    'send_mail_to':'XX字段',    'set_fields':{'当前使用状态':'未被占用', '设备使用人':'无'}}
 FSM_TRANS_TABLE_DEVICECARD = [
     {'source': '设备档案',		'trigger': '占用设备',		'dest': '设备档案',		'trans_action':device_card_trans_action_occupy},
     {'source': '设备档案',		'trigger': '释放设备',		'dest': '设备档案',		'trans_action':device_card_trans_action_free},
