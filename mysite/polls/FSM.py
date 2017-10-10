@@ -24,7 +24,7 @@ FSM_TRANS_TABLE = [
     {'source': '改进建议价值评审',	'trigger': '评审不通过', 		'dest': '提交建议',	        'trans_condition':{},   'trans_action':trans_action_3},
 	{'source': '改进建议实施',		'trigger': '更新进展',			'dest': '改进建议实施',		'trans_condition':{},   'trans_action':trans_action_4},
 	{'source': '改进建议实施',		'trigger': '实施结果提交评审', 	'dest': '实施结果评审',		'trans_condition':{},   'trans_action':trans_action_5},
-	{'source': '实施结果评审',		'trigger': '落地关闭', 			'dest': '改进建议落地',		'trans_condition':{},   'trans_action':trans_action_6},
+	{'source': '实施结果评审',		'trigger': '落地关闭', 			'dest': '关闭',		'trans_condition':{},   'trans_action':trans_action_6},
 	{'source': '实施结果评审',		'trigger': '评审不通过',		'dest': '改进建议实施',		'trans_condition':{},   'trans_action':trans_action_7}]
 ############################################################################################################################################################
 #FSM_TRANS_TABLE_DEVICECARD: 设备档案的状态转换表
@@ -51,7 +51,7 @@ FSM_TRANS_ISSUE_TRACK = [
     {'source': '维护人员处理',		'trigger': '提交审核',		'dest': '维护代表审核',		'trans_condition':{},   'trans_action':issue_track_action_1},
     {'source': '维护代表审核',		'trigger': '打回补充信息',	'dest': '维护人员处理',		'trans_condition':{},   'trans_action':issue_track_action_2},
     {'source': '维护代表审核',		'trigger': '转SE分析改进',	'dest': 'SE分析改进',		'trans_condition':{},   'trans_action':issue_track_action_3},
-    {'source': 'SE分析改进',		'trigger': '问题关闭',	    'dest': '问题关闭',		    'trans_condition':{},   'trans_action':{}}
+    {'source': 'SE分析改进',		'trigger': '问题关闭',	    'dest': '关闭',		    'trans_condition':{},   'trans_action':{}}
 ]
 
 ############################################################################################################################################################

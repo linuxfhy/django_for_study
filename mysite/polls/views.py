@@ -56,7 +56,10 @@ def flowindex(request, prj_name='improvement'):
 
 def flow_index_for_current_user(request, prj_name='improvement'):
     GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
-    obj_list = GenericModel.objects.filter( Q(assigned_to=request.user) | Q(assigned_to='anyone')).order_by('id')[:] 
+    obj_list = GenericModel.objects.filter(
+                                               Q(assigned_to=request.user) | Q(assigned_to='anyone'),
+                                               ~Q(curent_state='关闭')
+                                          ).order_by('id')[:]
     username = request.user.username
     return render(request, 'polls/flowindex.html', {'latest_namemodel_list':obj_list, 'prj_name':prj_name, 'username':username})
 
@@ -251,7 +254,10 @@ def flowhome(request):
         prj_list = []
         for prj_instance in FormAndModelDict:
             GenericModel = FormAndModelDict[prj_instance]['PrjModelClass']
-            assigned_count = GenericModel.objects.filter(assigned_to=request.user.username).count()
+            assigned_count = GenericModel.objects.filter(
+                                                         Q(assigned_to=request.user.username),
+                                                         ~Q(curent_state='关闭')
+                                                        ).count()
             prj_info_node = PrjInfo(prj_name = prj_instance, prj_name_zh = FormAndModelDict[prj_instance]['PrjNameZh'], assigned_count = assigned_count)
             prj_list.append(prj_info_node)
         username = request.user.username
@@ -262,6 +268,9 @@ def flowhome(request):
 def flowprjhome(request, prj_name):
     prj_name_zh = FormAndModelDict[prj_name]['PrjNameZh']
     GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
-    obj_list = GenericModel.objects.filter(Q(assigned_to=request.user.username)|Q(assigned_to='anyone')).order_by('id')[:]
+    obj_list = GenericModel.objects.filter(
+                                           Q(assigned_to=request.user.username)|Q(assigned_to='anyone'),
+                                           ~Q(curent_state='关闭')
+                                          ).order_by('id')[:]
     return render(request, 'polls/flowprjhome.html',{'prj_name':prj_name,'prj_name_zh':prj_name_zh, 'obj_list':obj_list})
 
