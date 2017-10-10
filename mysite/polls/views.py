@@ -157,13 +157,16 @@ def myflowdetail(request, model_id, prj_name='improvement'):
         #Done:Add code for state trans here
         triggerlist = []
         if namemodel.assigned_to in [request.user.username ,'anyone']:
-            triggerlist = workflowfsm.FSM_get_trigger(namemodel.curent_state) #TODO:delete those trigger which doesn't match trans condition
-            triggerlist_cpy = triggerlist[:]
-            for trigger_tmp in triggerlist:
-                trans_condition = workflowfsm.FSM_get_triger_and_desstate(namemodel.curent_state)[trigger_tmp]['condition']
-                if check_trans_condition(request, namemodel, trans_condition) == False:
-                    triggerlist_cpy.remove(trigger_tmp)
-            triggerlist = triggerlist_cpy
+            triggerlist = workflowfsm.FSM_get_trigger(namemodel.curent_state) #Delete those trigger which doesn't match trans condition
+            if triggerlist:
+                triggerlist_cpy = triggerlist[:]
+                for trigger_tmp in triggerlist:
+                    trans_condition = workflowfsm.FSM_get_triger_and_desstate(namemodel.curent_state)[trigger_tmp]['condition']
+                    if check_trans_condition(request, namemodel, trans_condition) == False:
+                        triggerlist_cpy.remove(trigger_tmp)
+                triggerlist = triggerlist_cpy
+            else:
+                triggerlist = []
         PrjNameZh = FormAndModelDict[prj_name]['PrjNameZh']
         return render(request, 'polls/flowdetail.html', {'form':form, 'model_id':model_id,'trigger':triggerlist, 'prj_name':prj_name, 'PrjNameZh':PrjNameZh})
         #return HttpResponse("hello")

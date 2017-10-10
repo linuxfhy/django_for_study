@@ -12,9 +12,11 @@
         <!--</div>-->
     {% endfor %}
 </table>
+{% if trigger %}
     {% for elmt in trigger %}
         <input type="submit" value={{elmt}} name='trigger' />
     {% endfor %}
+{% endif %}
 </form>
 <li><a href="{% url 'polls:flowhome' %}">返回首页</a></li>
 <li><a href="{% url 'polls:flowprjhome' prj_name %}">返回项目首页</a></li>

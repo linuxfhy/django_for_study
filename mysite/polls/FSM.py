@@ -47,7 +47,7 @@ issue_track_action_1 = {'assign_to':'维护代表'}
 issue_track_action_2 = {'assign_to':'维护处理人'}
 issue_track_action_3 = {'assign_to':'改进提取SE'}
 FSM_TRANS_ISSUE_TRACK = [
-    {'source': '维护人员处理',		'trigger': '更新进展',		'dest': '维护人员处理',		'trans_condition':{},   'trans_action':{}},
+    {'source': '维护人员处理',		'trigger': '更新进展',		'dest': '维护人员处理',		'trans_condition':{},   'trans_action':{'assign_to':'创建人(只读)'}},
     {'source': '维护人员处理',		'trigger': '提交审核',		'dest': '维护代表审核',		'trans_condition':{},   'trans_action':issue_track_action_1},
     {'source': '维护代表审核',		'trigger': '打回补充信息',	'dest': '维护人员处理',		'trans_condition':{},   'trans_action':issue_track_action_2},
     {'source': '维护代表审核',		'trigger': '转SE分析改进',	'dest': 'SE分析改进',		'trans_condition':{},   'trans_action':issue_track_action_3},
