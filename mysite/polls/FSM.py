@@ -42,10 +42,25 @@ FSM_TRANS_TABLE_DEVICECARD = [
     {'source': '设备档案',		'trigger': '更新信息',		'dest': '设备档案',		'trans_condition':device_trans_condition_update,   'trans_action':{}}
 ]
 ############################################################################################################################################################
+#上市保障问题跟踪
+issue_track_action_1 = {'assign_to':'维护代表'}
+issue_track_action_2 = {'assign_to':'维护处理人'}
+issue_track_action_3 = {'assign_to':'改进提取SE'}
+FSM_TRANS_ISSUE_TRACK = [
+    {'source': '维护人员处理',		'trigger': '更新进展',		'dest': '维护人员处理',		'trans_condition':{},   'trans_action':{}},
+    {'source': '维护人员处理',		'trigger': '提交审核',		'dest': '维护代表审核',		'trans_condition':{},   'trans_action':issue_track_action_1},
+    {'source': '维护代表审核',		'trigger': '打回补充信息',	'dest': '维护人员处理',		'trans_condition':{},   'trans_action':issue_track_action_2},
+    {'source': '维护代表审核',		'trigger': '转SE分析改进',	'dest': 'SE分析改进',		'trans_condition':{},   'trans_action':issue_track_action_3},
+    {'source': 'SE分析改进',		'trigger': '问题关闭',	    'dest': '问题关闭',		    'trans_condition':{},   'trans_action':{}}
+]
+
+############################################################################################################################################################
+############################################################################################################################################################
 #定义各个项目对应的状态转换表
 TRANS_TABLE_DICT = {
     'improvement':FSM_TRANS_TABLE,
-    'device_card':FSM_TRANS_TABLE_DEVICECARD
+    'device_card':FSM_TRANS_TABLE_DEVICECARD,
+    'issue_track':FSM_TRANS_ISSUE_TRACK
 }
 ############################################################################################################################################################
 class FsmStateTrans(object):
