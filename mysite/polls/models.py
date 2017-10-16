@@ -87,12 +87,19 @@ class DeviceCardForm(ModelForm):
         }
 ############################################################################################################################################################
 #上市保障问题跟踪
+CHOICE_CUSTOMER_TYPE = (
+    ('jinrong','金融'),
+    ('dianli','电力'),
+    ('nengyuan','能源'),
+    ('guangdian','广电'),
+    ('meizi','媒资'),
+)
 class IssueTrackModel(models.Model):
     summary = models.CharField(max_length=200, verbose_name="概要", default="【20170101】XX局点XX设备发生XX问题")
     detail = models.CharField(max_length=5000, verbose_name="详细描述")
     current_process = models.CharField(max_length=5000, verbose_name="处理进展",default="##由维护处理人填写##")
     #viewer_advice = models.CharField(max_length=5000, verbose_name="评审人意见",default="##由评审人填写##")
-    customer_type = models.CharField(max_length=200, default="#金融/电力/能源/广电/媒资#", verbose_name="客户类别")
+    customer_type = models.CharField(max_length=200,  verbose_name="客户类别", choices=CHOICE_CUSTOMER_TYPE)  #default="#金融/电力/能源/广电/媒资#", verbose_name="客户类别")
     class_1 = models.CharField(max_length=200, default="#软件/硬件/结构/操作/配置#", verbose_name="问题大类")
     class_2 = models.CharField(max_length=200, default="#/驱动/集群/缓存#", verbose_name="问题小类")
     class_3 = models.CharField(max_length=200, default="#/FC/SAS/ETH/内存/板卡(硬件)/#", verbose_name="问题模块")
