@@ -195,7 +195,9 @@ def flow_create_question(request, prj_name='improvement'):
         GenericForm = FormAndModelDict[prj_name]['PrjFormClass']
         #print('GET method ,ZH project name is %s'%FormAndModelDict[prj_name]['PrjNameZh'])
         #print('project name is %s'%FormAndModelDict[prj_name]['prjname'])
-        form = GenericForm(initial={'curent_state':init_state, 'created_by':current_user, 'assigned_to':'anyone'})
+        form = GenericForm(initial={'curent_state':init_state, 'created_by':current_user})
+        #if form.fields['assigned_to'] != 'anyone':
+        #    form.fields['assigned_to'] = current_user
         PrjNameZh = FormAndModelDict[prj_name]['PrjNameZh']
     return render(request, 'polls/name.html', {'form':form,'prj_name':prj_name, 'PrjNameZh':PrjNameZh})
 

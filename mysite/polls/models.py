@@ -94,17 +94,56 @@ CHOICE_CUSTOMER_TYPE = (
     ('guangdian','广电'),
     ('meizi','媒资'),
 )
+
+CHOICE_ISSUE_CLASS_1 = (
+    ('软件','软件'),
+    ('硬件','硬件'),
+    ('结构','结构'),
+    ('误操作','误操作'),
+    ('配置','配置'),
+)
+
+CHOICE_ISSUE_CLASS_2 = (
+    ('软件','集群'),
+    ('硬件','驱动'),
+    ('结构','缓存'),
+    ('误操作','机箱'),
+    ('配置','配置'),
+)
+
+CHOICE_ISSUE_CLASS_3 = (
+    ('---软件---','---软件---'),
+    ('FC','FC'),
+    ('SAS','SAS'),
+    ('ETH','ETH'),
+    ('---硬件---','---硬件---'),
+    ('内存','内存'),
+    ('板卡','板卡'),
+)
+MEDIA_CHOICES = (
+    ('Audio', (
+            ('vinyl', 'Vinyl'),
+            ('cd', 'CD'),
+        )
+    ),
+    ('Video', (
+            ('vhs', 'VHS Tape'),
+            ('dvd', 'DVD'),
+        )
+    ),
+    ('unknown', 'Unknown'),
+)
 class IssueTrackModel(models.Model):
     summary = models.CharField(max_length=200, verbose_name="概要", default="【20170101】XX局点XX设备发生XX问题")
     detail = models.CharField(max_length=5000, verbose_name="详细描述")
     current_process = models.CharField(max_length=5000, verbose_name="处理进展",default="##由维护处理人填写##")
     #viewer_advice = models.CharField(max_length=5000, verbose_name="评审人意见",default="##由评审人填写##")
     customer_type = models.CharField(max_length=200,  verbose_name="客户类别", choices=CHOICE_CUSTOMER_TYPE)  #default="#金融/电力/能源/广电/媒资#", verbose_name="客户类别")
-    class_1 = models.CharField(max_length=200, default="#软件/硬件/结构/操作/配置#", verbose_name="问题大类")
-    class_2 = models.CharField(max_length=200, default="#/驱动/集群/缓存#", verbose_name="问题小类")
-    class_3 = models.CharField(max_length=200, default="#/FC/SAS/ETH/内存/板卡(硬件)/#", verbose_name="问题模块")
-    buglist_url = models.CharField(max_length=200, default="0", verbose_name="Buglist链接")
-    improvement_url = models.CharField(max_length=200, default="0", verbose_name="改进项链接")
+    class_1 = models.CharField(max_length=200, verbose_name="问题大类", choices= CHOICE_ISSUE_CLASS_1)
+    class_2 = models.CharField(max_length=200, verbose_name="问题小类", choices= CHOICE_ISSUE_CLASS_2)
+    class_3 = models.CharField(max_length=200, verbose_name="问题模块", choices= MEDIA_CHOICES)
+    buglist_url = models.CharField(max_length=200, default="#Buglist单链接(若有)#", verbose_name="Buglist链接(URL)")
+    improvement_url = models.CharField(max_length=200, default="#改进单链接(若有)#", verbose_name="改进项链接(URL)")
     issue_processor = models.CharField(max_length=200, default="#提交人填写#", verbose_name="维护处理人")
     issue_checkor = models.CharField(max_length=200, default="#维护处理人指定#", verbose_name="维护代表")
     issue_se = models.CharField(max_length=200, default="#维护代表指定#", verbose_name="改进提取SE")
@@ -121,6 +160,8 @@ class IssueTrackForm(ModelForm):
             'current_process' : forms.Textarea(attrs={'cols': 80, 'rows': 5}),
             #'viewer_advice' : forms.Textarea(attrs={'cols': 80, 'rows': 5}),
             'detail' : forms.Textarea(attrs={'cols': 80, 'rows': 5}),
+            'buglist_url' : forms.TextInput(attrs={'size':79}),
+            'improvement_url' : forms.TextInput(attrs={'size':79}),
             'assigned_to': forms.TextInput(attrs={'readonly': True,'size':20}),
             'created_by': forms.TextInput(attrs={'readonly': True}),
             'curent_state': forms.TextInput(attrs={'readonly': True}),
