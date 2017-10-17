@@ -192,10 +192,16 @@ def flow_create_question(request, prj_name='improvement'):
         init_state = workflowfsm.FSM_get_init_state() 
         current_user = request.user.username
         #根据项目不同，产生不同的NameForm，学习为下拉框类型字段添加内容，用于增加项目
+        GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
         GenericForm = FormAndModelDict[prj_name]['PrjFormClass']
         #print('GET method ,ZH project name is %s'%FormAndModelDict[prj_name]['PrjNameZh'])
         #print('project name is %s'%FormAndModelDict[prj_name]['prjname'])
-        form = GenericForm(initial={'curent_state':init_state, 'created_by':current_user, 'assigned_to':'anyone'})
+        model_instance = GenericModel()
+        if model_instance.assigned_to == 'anyone':
+            assigned_to = 'anyone'
+        else:
+            assigned_to = current_user
+        form = GenericForm(initial={'curent_state':init_state, 'created_by':current_user, 'assigned_to':assigned_to})
         #if form.fields['assigned_to'] != 'anyone':
         #    form.fields['assigned_to'] = current_user
         PrjNameZh = FormAndModelDict[prj_name]['PrjNameZh']

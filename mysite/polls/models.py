@@ -68,7 +68,7 @@ class DeviceCardModel(models.Model):
     device_info = models.CharField(max_length=2000, verbose_name="设备信息", default="【归属小组】:")
     current_process = models.CharField(max_length=200, verbose_name="当前使用状态",default="##闲置OR使用##")
     occupied_by = models.CharField(max_length=200, default="#使用人更新#", verbose_name="设备使用人")
-    assigned_to   = models.CharField(max_length=200, default="", verbose_name="分配给(只读)")
+    assigned_to   = models.CharField(max_length=200, default="anyone", verbose_name="分配给(只读)")
     created_by = models.CharField(max_length=200, default="", verbose_name="创建人(只读)")
     curent_state = models.CharField(max_length=200, verbose_name="当前状态(只读)")
 
