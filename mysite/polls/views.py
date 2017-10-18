@@ -137,42 +137,45 @@ def excute_trans_action(request, model_instance, after_trans_action):
     return{'func_rc':True}
 
 def myflowdetail(request, model_id, prj_name='improvement'):
-    workflowfsm = WorkFlowFSM(prj_name)
-    GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
-    GenericForm = FormAndModelDict[prj_name]['PrjFormClass']
-    if request.method == 'POST':
-        model_instance = GenericModel.objects.get(pk=model_id)
-        form_instance = GenericForm(request.POST, instance=model_instance)
-        #Done:Add code for state trans here
-        form_instance.save()
-        trigger = request.POST['trigger']
-        after_trans_action = workflowfsm.FSM_get_trans_action(prj_name, model_instance.curent_state, trigger)
-        func_rc_dict = excute_trans_action(request, model_instance, after_trans_action)
-        if func_rc_dict['func_rc'] == False:
-            return HttpResponse(func_rc_dict['error_message'])
-        model_instance.curent_state = workflowfsm.FSM_get_triger_and_desstate(model_instance.curent_state)[trigger]['dest']
-        model_instance.save()
-        #return HttpResponseRedirect(reverse('polls:flowprjhome', kwargs={'prj_name':prj_name}))
-        return HttpResponseRedirect(reverse('polls:flowdetail', kwargs={'prj_name':prj_name,'model_id':model_id}))
+    if not request.user.is_authenticated():
+        return render(request, 'polls/flowhome.html')
     else:
-        namemodel = get_object_or_404(GenericModel, pk=model_id)
-        form = GenericForm(instance=namemodel)
-        #Done:Add code for state trans here
-        triggerlist = []
-        if namemodel.assigned_to in [request.user.username ,'anyone']:
-            triggerlist = workflowfsm.FSM_get_trigger(namemodel.curent_state) #Delete those trigger which doesn't match trans condition
-            if triggerlist:
-                triggerlist_cpy = triggerlist[:]
-                for trigger_tmp in triggerlist:
-                    trans_condition = workflowfsm.FSM_get_triger_and_desstate(namemodel.curent_state)[trigger_tmp]['condition']
-                    if check_trans_condition(request, namemodel, trans_condition) == False:
-                        triggerlist_cpy.remove(trigger_tmp)
-                triggerlist = triggerlist_cpy
-            else:
-                triggerlist = []
-        PrjNameZh = FormAndModelDict[prj_name]['PrjNameZh']
-        return render(request, 'polls/flowdetail.html', {'form':form, 'model_id':model_id,'trigger':triggerlist, 'prj_name':prj_name, 'PrjNameZh':PrjNameZh})
-        #return HttpResponse("hello")
+        workflowfsm = WorkFlowFSM(prj_name)
+        GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
+        GenericForm = FormAndModelDict[prj_name]['PrjFormClass']
+        if request.method == 'POST':
+            model_instance = GenericModel.objects.get(pk=model_id)
+            form_instance = GenericForm(request.POST, instance=model_instance)
+            #Done:Add code for state trans here
+            form_instance.save()
+            trigger = request.POST['trigger']
+            after_trans_action = workflowfsm.FSM_get_trans_action(prj_name, model_instance.curent_state, trigger)
+            func_rc_dict = excute_trans_action(request, model_instance, after_trans_action)
+            if func_rc_dict['func_rc'] == False:
+                return HttpResponse(func_rc_dict['error_message'])
+            model_instance.curent_state = workflowfsm.FSM_get_triger_and_desstate(model_instance.curent_state)[trigger]['dest']
+            model_instance.save()
+            #return HttpResponseRedirect(reverse('polls:flowprjhome', kwargs={'prj_name':prj_name}))
+            return HttpResponseRedirect(reverse('polls:flowdetail', kwargs={'prj_name':prj_name,'model_id':model_id}))
+        else:
+            namemodel = get_object_or_404(GenericModel, pk=model_id)
+            form = GenericForm(instance=namemodel)
+            #Done:Add code for state trans here
+            triggerlist = []
+            if namemodel.assigned_to in [request.user.username ,'anyone']:
+                triggerlist = workflowfsm.FSM_get_trigger(namemodel.curent_state) #Delete those trigger which doesn't match trans condition
+                if triggerlist:
+                    triggerlist_cpy = triggerlist[:]
+                    for trigger_tmp in triggerlist:
+                        trans_condition = workflowfsm.FSM_get_triger_and_desstate(namemodel.curent_state)[trigger_tmp]['condition']
+                        if check_trans_condition(request, namemodel, trans_condition) == False:
+                            triggerlist_cpy.remove(trigger_tmp)
+                    triggerlist = triggerlist_cpy
+                else:
+                    triggerlist = []
+            PrjNameZh = FormAndModelDict[prj_name]['PrjNameZh']
+            return render(request, 'polls/flowdetail.html', {'form':form, 'model_id':model_id,'trigger':triggerlist, 'prj_name':prj_name, 'PrjNameZh':PrjNameZh})
+            #return HttpResponse("hello")
 
 def flow_create_question(request, prj_name='improvement'):
     #print('enter my flow ,project name is %s'%prj_name)
@@ -274,11 +277,13 @@ def flowhome(request):
         return render(request, 'polls/flowhome.html')
 
 def flowprjhome(request, prj_name):
-    prj_name_zh = FormAndModelDict[prj_name]['PrjNameZh']
-    GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
-    obj_list = GenericModel.objects.filter(
-                                           Q(assigned_to=request.user.username)|Q(assigned_to='anyone'),
-                                           ~Q(curent_state='关闭')
-                                          ).order_by('id')[:]
-    return render(request, 'polls/flowprjhome.html',{'prj_name':prj_name,'prj_name_zh':prj_name_zh, 'obj_list':obj_list})
-
+    if request.user.is_authenticated():
+        prj_name_zh = FormAndModelDict[prj_name]['PrjNameZh']
+        GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
+        obj_list = GenericModel.objects.filter(
+                                               Q(assigned_to=request.user.username)|Q(assigned_to='anyone'),
+                                               ~Q(curent_state='关闭')
+                                              ).order_by('id')[:]
+        return render(request, 'polls/flowprjhome.html',{'prj_name':prj_name,'prj_name_zh':prj_name_zh, 'obj_list':obj_list})
+    else:
+        return render(request, 'polls/flowhome.html')
