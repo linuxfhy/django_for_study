@@ -102,6 +102,18 @@ CHOICE_ISSUE_CLASS_1 = (
     ('误操作','误操作'),
     ('配置','配置'),
 )
+CHOICE_ISSUE_LEVEL = (
+    ('一级事故','一级事故'),
+    ('二级事故','二级事故'),
+    ('三级事故','三级事故'),
+    ('一级ITR','一级ITR'),
+    ('二级ITR','二级ITR'),
+    ('三级ITR','三级ITR'),
+    ('A级重大问题','A级重大问题'),
+    ('B级重大问题','B级重大问题'),
+    ('C级重大问题','C级重大问题'),
+    ('一般问题','一般问题'),
+)
 
 CHOICE_ISSUE_CLASS_2 = (
     ('软件', (
@@ -140,6 +152,7 @@ class IssueTrackModel(models.Model):
     summary = models.CharField(max_length=200, verbose_name="概要", default="【20170101】XX局点XX设备发生XX问题")
     detail = models.CharField(max_length=5000, verbose_name="详细描述")
     current_process = models.CharField(max_length=5000, verbose_name="处理进展",default="##由维护处理人填写##")
+    issue_level = models.CharField(max_length=200, verbose_name="问题级别", choices= CHOICE_ISSUE_LEVEL)
     #viewer_advice = models.CharField(max_length=5000, verbose_name="评审人意见",default="##由评审人填写##")
     customer_type = models.CharField(max_length=200,  verbose_name="客户类别", choices=CHOICE_CUSTOMER_TYPE)  #default="#金融/电力/能源/广电/媒资#", verbose_name="客户类别")
     class_1 = models.CharField(max_length=200, verbose_name="问题大类", choices= CHOICE_ISSUE_CLASS_1)
