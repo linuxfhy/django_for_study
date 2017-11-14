@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.forms import ModelForm
 from django import forms
+from django.contrib.auth.models import Group
 # Create your models here.
 
 
@@ -183,9 +184,23 @@ class IssueTrackForm(ModelForm):
             'curent_state': forms.TextInput(attrs={'readonly': True}),
         }
 
+IssueTrackAuth = {
+    'visit':'IssueTrackVisit',
+    'exec':'IssueTrackExec',
+}
+
+
+IssueTrackAdminGrp = Group(name='AdminGrp')
+IssueTrackUserGrp  = Group(name='UserGrp')
+IssueTrackGrp = {
+    'AdminGrp':IssueTrackAdminGrp,
+    'UserGrp':IssueTrackUserGrp
+}
+
+
 ############################################################################################################################################################
 FormAndModelDict = {
     'improvement':{'PrjNameZh':'改进建议','PrjModelClass':NameModel,'PrjFormClass':NameForm},
     'device_card':{'PrjNameZh':'设备管理','PrjModelClass':DeviceCardModel,'PrjFormClass':DeviceCardForm},
-    'issue_track':{'PrjNameZh':'网上问题处理','PrjModelClass':IssueTrackModel,'PrjFormClass':IssueTrackForm}
+    'issue_track':{'PrjNameZh':'网上问题处理','PrjModelClass':IssueTrackModel,'PrjFormClass':IssueTrackForm,'PrjAuth':IssueTrackAuth,'PrjGrp':IssueTrackGrp}
 }

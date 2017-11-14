@@ -158,6 +158,10 @@ def myflowdetail(request, model_id, prj_name='improvement'):
             #return HttpResponseRedirect(reverse('polls:flowprjhome', kwargs={'prj_name':prj_name}))
             return HttpResponseRedirect(reverse('polls:flowdetail', kwargs={'prj_name':prj_name,'model_id':model_id}))
         else:
+            if 'PrjAuth' in FormAndModelDict[prj_name]:
+                visit_perm = 'polls.'+FormAndModelDict[prj_name]['PrjAuth']['visit']
+                if not request.user.has_perm(visit_perm):
+                    return HttpResponse('403 Forbidden')#TODO:return 403 error
             namemodel = get_object_or_404(GenericModel, pk=model_id)
             form = GenericForm(instance=namemodel)
             #Done:Add code for state trans here
@@ -277,6 +281,10 @@ def flowhome(request):
         return render(request, 'polls/flowhome.html')
 
 def flowprjhome(request, prj_name):
+    if 'PrjAuth' in FormAndModelDict[prj_name]:
+        visit_perm = 'polls.'+FormAndModelDict[prj_name]['PrjAuth']['visit']
+        if not request.user.has_perm(visit_perm):
+            return HttpResponse('403 Forbidden')#TODO:return 403 error
     if request.user.is_authenticated():
         prj_name_zh = FormAndModelDict[prj_name]['PrjNameZh']
         GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
