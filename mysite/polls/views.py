@@ -6,7 +6,7 @@ from django.utils import timezone
 from .models import Choice, Question, NameModel, UserModel
 from .models import NameForm, UserForm, FormAndModelDict
 from .FSM import WorkFlowFSM
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
@@ -164,7 +164,7 @@ def myflowdetail(request, model_id, prj_name='improvement'):
             return HttpResponseRedirect(reverse('polls:flowdetail', kwargs={'prj_name':prj_name,'model_id':model_id}))
         else:
             if 'PrjAuth' in FormAndModelDict[prj_name]:
-                visit_perm = 'polls.'+FormAndModelDict[prj_name]['PrjAuth']['visit']
+                visit_perm = 'polls.'+FormAndModelDict[prj_name]['PrjAuth']['访问权限']
                 if not request.user.has_perm(visit_perm):
                     return HttpResponse('403 Forbidden')#TODO:return 403 error
             namemodel = get_object_or_404(GenericModel, pk=model_id)
@@ -287,7 +287,7 @@ def flowhome(request):
 
 def flowprjhome(request, prj_name):
     if 'PrjAuth' in FormAndModelDict[prj_name]:
-        visit_perm = 'polls.'+FormAndModelDict[prj_name]['PrjAuth']['visit']
+        visit_perm = 'polls.'+FormAndModelDict[prj_name]['PrjAuth']['访问权限']
         if not request.user.has_perm(visit_perm):
             return HttpResponse('403 Forbidden')#TODO:return 403 error
     if request.user.is_authenticated():
@@ -304,10 +304,19 @@ def flowprjhome(request, prj_name):
 ##############################For Auth Admin:Begin##############################
 def add_auth_to_group(GenericModel, group, auth_str):
     content_type = ContentType.objects.get_for_model(GenericModel)
+
     permission = Permission.objects.get(
         codename = auth_str,
         content_type=content_type,
     )
+    if not  permission:
+        permission = Permission.objects.create(
+            codename=auth_str,
+            name=auth_str,
+            content_type=content_type,
+        )
+        permission.save()
+    group.save() #fix bug：Exception Value:"<Group: AdminGrp>" needs to have a value for field "id" before this many-to-many relationship can be used.
     group.permissions.add(permission)
 
 def add_prj_auth_to_group(prj_name, grp_key, auth_key):
@@ -318,10 +327,15 @@ def add_prj_auth_to_group(prj_name, grp_key, auth_key):
 
 def flow_grp_auth_admin(request, prj_name):
     class AuthGrpAdmin(forms.Form):
-        group_key = forms.CharField(label='群组名称', max_length=100)
-        auty_key = forms.CharField(label='权限', max_length=100)
+        group_key = forms.ChoiceField(label='群组名称', choices=((key, key) for key in FormAndModelDict[prj_name]['PrjGrp']))
+        auth_key = forms.ChoiceField(label='权限', choices=((key, key) for key in FormAndModelDict[prj_name]['PrjAuth']))
     if request.method == 'POST':
-        pass
+        authform = AuthGrpAdmin(request.POST)
+        if authform.is_valid():
+            grp_key = authform.cleaned_data['group_key']
+            auth_key = authform.cleaned_data['auth_key']
+            add_prj_auth_to_group(prj_name, grp_key, auth_key)
+            return HttpResponseRedirect(reverse('polls:flowprjhome', kwargs={'prj_name':prj_name}))
     else:
         authform = AuthGrpAdmin()
     return render(request, 'polls/flowgrpauthadmin.html',{'form':authform,'prj_name':prj_name})

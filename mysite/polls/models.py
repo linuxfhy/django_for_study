@@ -185,16 +185,16 @@ class IssueTrackForm(ModelForm):
         }
 
 IssueTrackAuth = {
-    'visit':'IssueTrackVisit',
-    'exec':'IssueTrackExec',
+    '访问权限':'IssueTrackVisit',
+    '使用权限':'IssueTrackExec',
 }
 
 
 IssueTrackAdminGrp = Group(name='AdminGrp')
 IssueTrackUserGrp  = Group(name='UserGrp')
 IssueTrackGrp = {
-    'AdminGrp':IssueTrackAdminGrp,
-    'UserGrp':IssueTrackUserGrp
+    '管理员群组':IssueTrackAdminGrp,
+    '用户群组':IssueTrackUserGrp
 }
 
 
