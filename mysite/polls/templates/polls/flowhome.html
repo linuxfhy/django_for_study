@@ -1,6 +1,7 @@
 {% load static %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}" />
+<p>【TaskSteper】积跬步，致千里</p> 
 <li><a href="{% url 'polls:flowhome' %}">首页</a></li>
 
 
@@ -10,13 +11,17 @@
         {% if username %}
             <tr><td>Hello, {{ username }}</td><td>【<a href="{% url 'polls:flowlogout' %}">注销</a>】</td></tr>
         {% endif %}
-        <tr><td>项目名称</td><td>待办数目</td></tr>
+        <tr><td>项目名称</td><td>待办数目</td><td>权限管理</td></tr>
         {% for cur_prj in prj_list %}
-            <tr><td>♦<a href="{% url 'polls:flowprjhome' cur_prj.prj_name %}">{{ cur_prj.prj_name_zh }}</a></td><td>[{{ cur_prj.assigned_count }}]</td></tr>
+            <tr>
+                <td>♦<a href="{% url 'polls:flowprjhome' cur_prj.prj_name %}">{{ cur_prj.prj_name_zh }}</a></td>
+                <td>[{{ cur_prj.assigned_count }}]</td>
+                <td><a href="{% url 'polls:flowgrpauthadmin' cur_prj.prj_name %}">权限管理</a></td>
+            </tr>
         {% endfor %}
     </table>
 {% else %}
-    <p>Please Login First. If you don't have an account, please regist first.</p>
+    <p>请先登录；如果没有账号，请先注册</p>
     <li><a href="{% url 'polls:flowregist' %}">注册</a></li>
     <li><a href="{% url 'polls:flowlogin' %}">登录</a></li>
 {% endif %}

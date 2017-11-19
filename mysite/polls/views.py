@@ -9,8 +9,13 @@ from .FSM import WorkFlowFSM
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
+from django.contrib.contenttypes.models import ContentType
+from django import forms
 
 
+class AuthGrpAdmin(forms.Form):
+    group_key = forms.CharField(label='群组名称', max_length=100)
+    auty_key = forms.CharField(label='权限', max_length=100)
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
     context_object_name = 'latest_question_list'
@@ -295,3 +300,31 @@ def flowprjhome(request, prj_name):
         return render(request, 'polls/flowprjhome.html',{'prj_name':prj_name,'prj_name_zh':prj_name_zh, 'obj_list':obj_list})
     else:
         return render(request, 'polls/flowhome.html')
+
+##############################For Auth Admin:Begin##############################
+def add_auth_to_group(GenericModel, group, auth_str):
+    content_type = ContentType.objects.get_for_model(GenericModel)
+    permission = Permission.objects.get(
+        codename = auth_str,
+        content_type=content_type,
+    )
+    group.permissions.add(permission)
+
+def add_prj_auth_to_group(prj_name, grp_key, auth_key):
+    GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
+    group_val = FormAndModelDict[prj_name]['PrjGrp'][grp_key]
+    auth_val = FormAndModelDict[prj_name]['PrjAuth'][auth_key]
+    add_auth_to_group(GenericModel, group_val, auth_val)
+
+def flow_grp_auth_admin(request, prj_name):
+    class AuthGrpAdmin(forms.Form):
+        group_key = forms.CharField(label='群组名称', max_length=100)
+        auty_key = forms.CharField(label='权限', max_length=100)
+    if request.method == 'POST':
+        pass
+    else:
+        authform = AuthGrpAdmin()
+    return render(request, 'polls/flowgrpauthadmin.html',{'form':authform,'prj_name':prj_name})
+##############################For Auth Admin:End  ##############################
+
+
