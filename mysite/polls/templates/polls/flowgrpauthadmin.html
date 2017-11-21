@@ -2,7 +2,7 @@
 
 <table>
     {% csrf_token %}
-    {% for field in form %}
+    {% for field in AddAuthToGrpForm %}
         <!--<div class="fieldWrapper">-->
             <tr><td>{{ field.label_tag }}</td><td> {{ field }}<td></tr>
             {% if field.help_text %}
@@ -11,7 +11,26 @@
         <!--</div>-->
     {% endfor %}
 </table>
-    <input type="submit" value="添加权限" />
+    <input type="submit" value="添加权限" name='trigger'/>
 
 </form>
+
+<form action="{% url 'polls:flowgrpauthadmin' prj_name %}" method="post">
+
+<table>
+    {% csrf_token %}
+    {% for field in AddUserToGrpForm %}
+        <!--<div class="fieldWrapper">-->
+            <tr><td>{{ field.label_tag }}</td><td> {{ field }}<td></tr>
+            {% if field.help_text %}
+            <p class="help">{{ field.help_text|safe }}</p>
+            {% endif %}
+        <!--</div>-->
+    {% endfor %}
+</table>
+    <input type="submit" value="添加用户" name='trigger'/>
+
+</form>
+<li><a href="{% url 'polls:flowhome' %}">返回首页</a></li>
+<li><a href="{% url 'polls:flowprjhome' prj_name %}">返回项目首页</a></li>
 

@@ -336,6 +336,9 @@ def flow_grp_auth_admin(request, prj_name):
     class AuthGrpAdmin(forms.Form):
         group_key = forms.ChoiceField(label='群组名称', choices=((key, key) for key in FormAndModelDict[prj_name]['PrjGrp']))
         auth_key = forms.ChoiceField(label='权限', choices=((key, key) for key in FormAndModelDict[prj_name]['PrjAuth']))
+    class AuthUsrAdmin(forms.Form):
+        group_key = forms.ChoiceField(label='群组名称', choices=((key, key) for key in FormAndModelDict[prj_name]['PrjGrp']))
+        auth_key = forms.ChoiceField(label='用户名', choices=((key.username, key.username) for key in User.objects.all()))
     if request.method == 'POST':
         authform = AuthGrpAdmin(request.POST)
         if authform.is_valid():
@@ -344,8 +347,18 @@ def flow_grp_auth_admin(request, prj_name):
             add_prj_auth_to_group(prj_name, grp_key, auth_key)
             return HttpResponseRedirect(reverse('polls:flowprjhome', kwargs={'prj_name':prj_name}))
     else:
-        authform = AuthGrpAdmin()
-    return render(request, 'polls/flowgrpauthadmin.html',{'form':authform,'prj_name':prj_name})
+        AddAuthToGrpForm = AuthGrpAdmin()
+        AddUserToGrpForm = AuthUsrAdmin()
+    return render(request, 'polls/flowgrpauthadmin.html',{'AddUserToGrpForm':AddUserToGrpForm,'AddAuthToGrpForm':AddAuthToGrpForm,'prj_name':prj_name})
+
+
 ##############################For Auth Admin:End  ##############################
+
+
+
+
+
+
+
 
 
