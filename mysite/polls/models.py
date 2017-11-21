@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.forms import ModelForm
 from django import forms
-from django.contrib.auth.models import Group
+#from django.contrib.auth.models import Group
 # Create your models here.
 
 
@@ -190,11 +190,11 @@ IssueTrackAuth = {
 }
 
 
-IssueTrackAdminGrp = Group(name='AdminGrp')
-IssueTrackUserGrp  = Group(name='UserGrp')
+#IssueTrackAdminGrp = Group(name='AdminGrp')
+#IssueTrackUserGrp  = Group(name='UserGrp')
 IssueTrackGrp = {
-    '管理员群组':IssueTrackAdminGrp,
-    '用户群组':IssueTrackUserGrp
+    '管理员群组':'AdminGrp',  #Must in this format:'中文名':'English name'
+    '用户群组':'UserGrp'
 }
 
 

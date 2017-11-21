@@ -6,7 +6,7 @@ from django.utils import timezone
 from .models import Choice, Question, NameModel, UserModel
 from .models import NameForm, UserForm, FormAndModelDict
 from .FSM import WorkFlowFSM
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import User, Permission,Group
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
@@ -264,7 +264,8 @@ def flowlogout(request):
     return HttpResponseRedirect(reverse('polls:flowhome'))
 
 def flowhome(request):
-    #TODO:添加当前登录用户显示。让项目名称显示更为灵活
+    #DONE:添加当前登录用户显示。让项目名称显示更为灵活
+    #TODO:增加项目名检查，保证项目名不重复
     if request.user.is_authenticated():
         class PrjInfo(object):
             def __init__(self, prj_name, prj_name_zh, assigned_count):
@@ -304,27 +305,33 @@ def flowprjhome(request, prj_name):
 ##############################For Auth Admin:Begin##############################
 def add_auth_to_group(GenericModel, group, auth_str):
     content_type = ContentType.objects.get_for_model(GenericModel)
-
-    permission = Permission.objects.get(
-        codename = auth_str,
-        content_type=content_type,
-    )
-    if not  permission:
+    try:
+        permission = Permission.objects.get(
+            codename = auth_str,
+            content_type=content_type,
+        )
+    except Permission.DoesNotExist:
         permission = Permission.objects.create(
             codename=auth_str,
             name=auth_str,
             content_type=content_type,
         )
         permission.save()
-    group.save() #fix bug：Exception Value:"<Group: AdminGrp>" needs to have a value for field "id" before this many-to-many relationship can be used.
     group.permissions.add(permission)
+    group.save() #fix bug：Exception Value:"<Group: AdminGrp>" needs to have a value for field "id" before this many-to-many relationship can be used.
 
 def add_prj_auth_to_group(prj_name, grp_key, auth_key):
     GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
-    group_val = FormAndModelDict[prj_name]['PrjGrp'][grp_key]
+    group_name_EN = FormAndModelDict[prj_name]['PrjGrp'][grp_key]
+    grp_name = prj_name+'_'+group_name_EN
+    try:
+        group_obj = Group.objects.get(name=grp_name)
+    except Group.DoesNotExist:
+        group_obj = Group.objects.create(name=grp_name)
+        group_obj.save()
     auth_val = FormAndModelDict[prj_name]['PrjAuth'][auth_key]
-    add_auth_to_group(GenericModel, group_val, auth_val)
-
+    add_auth_to_group(GenericModel, group_obj, auth_val)
+#TODO:这里应该增加权限控制，避免非管理员用户操作权限
 def flow_grp_auth_admin(request, prj_name):
     class AuthGrpAdmin(forms.Form):
         group_key = forms.ChoiceField(label='群组名称', choices=((key, key) for key in FormAndModelDict[prj_name]['PrjGrp']))
