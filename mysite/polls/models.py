@@ -1,9 +1,10 @@
+import django.utils.timezone as timezone
 import datetime
 from django.db import models
 from django.utils import timezone
 from django.forms import ModelForm
 from django import forms
-#from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group
 # Create your models here.
 
 
@@ -128,9 +129,17 @@ BYCLE_TYPES_CHOICES = (
         )
     ),
 )
+CHOICE_ORDER_TYPES = (
+    ('维修调试','维修调试'),
+    ('例行保养','例行保养'),
+)
 class GiantMaintainModel(models.Model):
     summary = models.CharField(max_length=200, verbose_name="QQ昵称")
+    weixin  = models.CharField(max_length=200, verbose_name="微信号")
+    custom_name = models.CharField(max_length=200, verbose_name="真实姓名", default='##请在此输入真实姓名##')
     device_info = models.CharField(max_length=2000, verbose_name="车辆型号", choices=BYCLE_TYPES_CHOICES)
+    order_type = models.CharField(max_length=2000, verbose_name="预约类型", choices=CHOICE_ORDER_TYPES)
+    buy_date = models.DateField(max_length=2000, verbose_name="购买时间", default=timezone.now)
     assigned_to   = models.CharField(max_length=200, default="anyone", verbose_name="分配给(只读)")
     created_by = models.CharField(max_length=200, default="", verbose_name="创建人(只读)")
     curent_state = models.CharField(max_length=200, verbose_name="当前状态(只读)")
@@ -142,6 +151,8 @@ class GiantMaintainForm(ModelForm):
         exclude = []#['curent_state','created_by']
         widgets = {
             'summary' : forms.TextInput(attrs={'size':50}),
+            'weixin' : forms.TextInput(attrs={'size':50}),
+            'custom_name' : forms.TextInput(attrs={'size':50}),
             'assigned_to': forms.TextInput(attrs={'readonly': True,'size':20}),
             'created_by': forms.TextInput(attrs={'readonly': True}),
             'curent_state': forms.TextInput(attrs={'readonly': True}),
