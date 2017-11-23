@@ -335,23 +335,38 @@ def add_prj_auth_to_group(prj_name, grp_key, auth_key):
     except Group.DoesNotExist:
         group_obj = Group.objects.create(name=grp_name)
         group_obj.save()
-    auth_val = FormAndModelDict[prj_name]['PrjAuth'][auth_key]
+    auth_val = prj_name+'_'+FormAndModelDict[prj_name]['PrjAuth'][auth_key]
     add_auth_to_group(GenericModel, group_obj, auth_val)
-#TODO:这里应该增加权限控制，避免非管理员用户操作权限
+
+def add_user_to_group(prj_name, grp_key, user_key):
+    group_name_EN = FormAndModelDict[prj_name]['PrjGrp'][grp_key]
+    grp_name = prj_name+'_'+group_name_EN
+    group_obj = Group.objects.get(name=grp_name)
+    user_obj = User.objects.get(username=user_key)
+    user_obj.groups.add(group_obj)
+
+#TODO:这里应该增加权限控制，避免非管理员用户操作权限i
 def flow_grp_auth_admin(request, prj_name):
     class AuthGrpAdmin(forms.Form):
         group_key = forms.ChoiceField(label='群组名称', choices=((key, key) for key in FormAndModelDict[prj_name]['PrjGrp']))
         auth_key = forms.ChoiceField(label='权限', choices=((key, key) for key in FormAndModelDict[prj_name]['PrjAuth']))
     class AuthUsrAdmin(forms.Form):
         group_key = forms.ChoiceField(label='群组名称', choices=((key, key) for key in FormAndModelDict[prj_name]['PrjGrp']))
-        auth_key = forms.ChoiceField(label='用户名', choices=((key.username, key.username) for key in User.objects.all()))
+        user_key = forms.ChoiceField(label='用户名', choices=((key.username, key.username) for key in User.objects.all()))
     if request.method == 'POST':
-        authform = AuthGrpAdmin(request.POST)
-        if authform.is_valid():
-            grp_key = authform.cleaned_data['group_key']
-            auth_key = authform.cleaned_data['auth_key']
-            add_prj_auth_to_group(prj_name, grp_key, auth_key)
-            return HttpResponseRedirect(reverse('polls:flowprjhome', kwargs={'prj_name':prj_name}))
+        if request.POST['trigger'] == "为群组添加权限":
+            authform = AuthGrpAdmin(request.POST)
+            if authform.is_valid():
+                grp_key = authform.cleaned_data['group_key']
+                auth_key = authform.cleaned_data['auth_key']
+                add_prj_auth_to_group(prj_name, grp_key, auth_key)
+        elif request.POST['trigger'] == "添加用户到群组":
+            GrpUserForm = AuthUsrAdmin(request.POST)
+            if GrpUserForm.is_valid():
+                grp_key = GrpUserForm.cleaned_data['group_key']
+                user_key = GrpUserForm.cleaned_data['user_key']
+                add_user_to_group(prj_name, grp_key, user_key)
+        return HttpResponseRedirect(reverse('polls:flowgrpauthadmin', kwargs={'prj_name':prj_name}))
     else:
         AddAuthToGrpForm = AuthGrpAdmin()
         AddUserToGrpForm = AuthUsrAdmin()
