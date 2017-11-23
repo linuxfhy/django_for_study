@@ -55,12 +55,19 @@ FSM_TRANS_ISSUE_TRACK = [
 ]
 
 ############################################################################################################################################################
+#捷安特自行车维护
+FSM_TRANS_GINAT_MAINTAIN_TRACK = [
+    {'source': '创建保养预约单',	'trigger': '提交预约单',	'dest': '等待保养',		'trans_condition':{},   'trans_action':{'assign_to':{'constant':'tanluzhe7'}}},
+    {'source': '等待保养',		'trigger': '完成保养',	        'dest': '关闭',		        'trans_condition':{},   'trans_action':{}}
+]
+
 ############################################################################################################################################################
 #定义各个项目对应的状态转换表
 TRANS_TABLE_DICT = {
     'improvement':FSM_TRANS_TABLE,
     'device_card':FSM_TRANS_TABLE_DEVICECARD,
-    'issue_track':FSM_TRANS_ISSUE_TRACK
+    'issue_track':FSM_TRANS_ISSUE_TRACK,
+    'giant_maintain':FSM_TRANS_GINAT_MAINTAIN_TRACK
 }
 ############################################################################################################################################################
 class FsmStateTrans(object):

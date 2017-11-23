@@ -106,6 +106,12 @@ def excute_trans_action(request, model_instance, after_trans_action):
     if 'assign_to' in after_trans_action:
         if after_trans_action['assign_to'] == 'anyone':
             model_instance.assigned_to = 'anyone'
+        elif 'constant' in after_trans_action['assign_to']:
+            user_name = after_trans_action['assign_to']['constant'] 
+            userinfo = User.objects.filter(username=user_name)
+            if not userinfo:
+                return {'func_rc':False, 'error_message':'请给<\'assign_to\':\'constant\'>指定合适的人，系统中无此用户:'+user_name}
+            model_instance.assigned_to = user_name 
         else:
             field_found = False
             for field in model_instance._meta.get_fields():
