@@ -17,7 +17,6 @@
                 <td>♦<a href="{% url 'polls:flowprjhome' cur_prj.prj_name %}">{{ cur_prj.prj_name_zh }}</a></td>
                 <td>[{{ cur_prj.assigned_count }}]</td>
                 <td><a href="{% url 'polls:flowgrpauthadmin' cur_prj.prj_name %}">权限管理</a></td>
-                <td><a href="{% url 'polls:myflow' cur_prj.prj_name %}">创建</a></td>
             </tr>
         {% endfor %}
     </table>

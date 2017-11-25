@@ -170,7 +170,12 @@ def myflowdetail(request, model_id, prj_name='improvement'):
             return HttpResponseRedirect(reverse('polls:flowdetail', kwargs={'prj_name':prj_name,'model_id':model_id}))
         else:
             if 'PrjAuth' in FormAndModelDict[prj_name]:
-                visit_perm = 'polls.'+FormAndModelDict[prj_name]['PrjAuth']['访问权限']
+                visit_perm_str = prj_name+'_'+FormAndModelDict[prj_name]['PrjAuth']['访问权限']
+                content_type = ContentType.objects.get_for_model(GenericModel)
+                visit_perm = Permission.objects.get(
+                    codename = visit_perm_str,
+                    content_type=content_type,
+                )
                 if not request.user.has_perm(visit_perm):
                     return HttpResponse('403 Forbidden')#TODO:return 403 error
             namemodel = get_object_or_404(GenericModel, pk=model_id)
