@@ -11,13 +11,14 @@
         {% if username %}
             <tr><td>Hello, {{ username }}</td><td>【<a href="{% url 'polls:flowlogout' %}">注销</a>】</td></tr>
         {% endif %}
-        <tr><td>项目名称</td><td>待办数目</td><td>权限管理</td><td>创建条目</td></tr>
+        <tr><td>项目名称</td><td>待办数目</td><td>权限管理</td><td>创建条目</td><td>注册项目用户</td></tr>
         {% for cur_prj in prj_list %}
             <tr>
                 <td>♦<a href="{% url 'polls:flowprjhome' cur_prj.prj_name %}">{{ cur_prj.prj_name_zh }}</a></td>
                 <td>[{{ cur_prj.assigned_count }}]</td>
-                <td><a href="{% url 'polls:flowgrpauthadmin' cur_prj.prj_name %}">权限管理</a></td>
+                <td><a href="{% url 'polls:flowgrpauthadmin' cur_prj.prj_name %}">管理</a></td>
                 <td><a href="{% url 'polls:myflow' cur_prj.prj_name %}">创建</a></td>
+                <td><a href="{% url 'polls:flowprjregist' cur_prj.prj_name %}">注册</a></td>
             </tr>
         {% endfor %}
     </table>

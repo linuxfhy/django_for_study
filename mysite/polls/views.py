@@ -233,25 +233,6 @@ def flow_create_question(request, prj_name='improvement'):
 def myflowprocess(request):
     return HttpResponse("Hello, world. This is form processing result.")
 
-def flowregist(request):
-    if request.method == 'POST':
-        userform = UserForm(request.POST)
-        if userform.is_valid():
-            username = userform.cleaned_data['username']
-            email = userform.cleaned_data['email']
-            password = userform.cleaned_data['password']
-
-            userinfo = User.objects.filter(username=username)
-            if userinfo:
-                return HttpResponse('User name %s has been occupied, please change another usename.'%username)
-
-            user = User.objects.create_user(username, email, password)
-            user.save()
-            #return HttpResponse('regist success!!!')
-            return HttpResponseRedirect(reverse('polls:flowlogin'))
-    else:
-        userform = UserForm()
-    return render(request, 'polls/flowregist.html',{'form':userform})
 
 def flowlogin(request):
     if request.method == 'POST':
@@ -377,6 +358,41 @@ def flow_grp_auth_admin(request, prj_name):
         AddUserToGrpForm = AuthUsrAdmin()
     return render(request, 'polls/flowgrpauthadmin.html',{'AddUserToGrpForm':AddUserToGrpForm,'AddAuthToGrpForm':AddAuthToGrpForm,'prj_name':prj_name})
 
+def flowregist(request, prj_name='Null'):
+    if request.method == 'POST':
+        userform = UserForm(request.POST)
+        if userform.is_valid():
+            username = userform.cleaned_data['username']
+            email = userform.cleaned_data['email']
+            password = userform.cleaned_data['password']
+            userinfo = User.objects.filter(username=username)
+            if prj_name == 'Null':
+                if userinfo:
+                    return HttpResponse('User name %s has been occupied, please change another usename.'%username)
+                user = User.objects.create_user(username, email, password)
+                user.save()
+                #return HttpResponse('regist success!!!')
+                return HttpResponseRedirect(reverse('polls:flowlogin'))
+            else:
+                if userinfo:
+                    return HttpResponse('User name %s has been occupied, please contact the project administrator for authority'%username)
+                user = User.objects.create_user(username, email, password)
+                user.save()
+                group_name_EN = FormAndModelDict[prj_name]['PrjGrp']['注册用户群组']
+                grp_name = prj_name+'_'+group_name_EN
+                try:
+                    group_obj = Group.objects.get(name=grp_name)
+                except Group.DoesNotExist:
+                    group_obj = Group.objects.create(name=grp_name)
+                user.groups.add(group_obj)
+                #return HttpResponse('regist success!!!')
+                return HttpResponseRedirect(reverse('polls:flowlogin'))
+    else:
+        userform = UserForm()
+        if prj_name == 'Null':
+            return render(request, 'polls/flowregist.html',{'form':userform})
+        else:
+            return render(request, 'polls/flowregist.html',{'form':userform,'prj_name':prj_name})
 
 ##############################For Auth Admin:End  ##############################
 

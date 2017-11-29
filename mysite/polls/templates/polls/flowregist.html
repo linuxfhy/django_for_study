@@ -1,4 +1,8 @@
-<form action="{% url 'polls:flowregist' %}" method="post">
+{% if prj_name %}
+    <form action="{% url 'polls:flowprjregist' prj_name %}" method="post">
+{% else %}
+    <form action="{% url 'polls:flowregist' %}" method="post">
+{% endif %}
 
 <table>
     {% csrf_token %}

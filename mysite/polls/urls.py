@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^(?P<pk>[0-9]+)/results/$', views.ResultsView.as_view(), name='results'),
     url(r'^(?P<question_id>[0-9]+)/vote/$', views.vote, name='vote'),
     url(r'^[0-9]+/flow/(?P<prj_name>[a-zA-Z0-9_]+)/home/$', views.flowprjhome, name='flowprjhome'),
+    url(r'^[0-9]+/flow/(?P<prj_name>[a-zA-Z0-9_]+)/regist$', views.flowregist, name='flowprjregist'),
     url(r'^[0-9]+/flow/(?P<prj_name>[a-zA-Z0-9_]+)/new/$', views.flow_create_question, name='myflow'),
     url(r'^[0-9]+/flow/(?P<prj_name>[a-zA-Z0-9_]+)/index/$', views.flowindex, name='myflowindex'),
     url(r'^[0-9]+/flow/(?P<prj_name>[a-zA-Z0-9_]+)/cur_user/$', views.flow_index_for_current_user, name='PrjIndexForCurUser'),

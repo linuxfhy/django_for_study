@@ -265,7 +265,8 @@ IssueTrackAuth = {
 #IssueTrackUserGrp  = Group(name='UserGrp')
 IssueTrackGrp = {
     '管理员群组':'AdminGrp',  #Must in this format:'中文名':'English name'
-    '用户群组':'UserGrp'
+    '用户群组':'UserGrp',
+    '注册用户群组':'RegisteredUserGrp'
 }
 
 
