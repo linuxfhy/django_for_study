@@ -211,6 +211,30 @@ def flow_create_question(request, prj_name='improvement'):
             return HttpResponseRedirect(reverse('polls:PrjIndexForCurUser', kwargs={'prj_name':prj_name}))
     # if a GET (or any other method) we'll create a blank form
     else:
+        cur_user = request.user
+        if not cur_user.is_authenticated():
+            return HttpResponse('无权限，请先注册登录')#DONE:return 403 error
+
+        if 'PrjAuth' in FormAndModelDict[prj_name]:
+            exec_perm_str = prj_name+'_'+FormAndModelDict[prj_name]['PrjAuth']['使用权限']
+            GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
+            content_type = ContentType.objects.get_for_model(GenericModel)
+            try:
+                exec_perm = Permission.objects.get(
+                    codename = exec_perm_str,
+                    content_type=content_type,
+                )
+            except Permission.DoesNotExist:
+                exec_perm = Permission.objects.create(
+                    codename = exec_perm_str,
+                    name = exec_perm_str,
+                    content_type=content_type,
+                )
+
+            if not request.user.has_perm(exec_perm):
+                return HttpResponse('没有创建权限，请联系该项目管理员')#DONE:return 403 error
+
+ 
         workflowfsm = WorkFlowFSM(prj_name=prj_name)
         init_state = workflowfsm.FSM_get_init_state() 
         current_user = request.user.username
