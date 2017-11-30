@@ -177,7 +177,7 @@ def myflowdetail(request, model_id, prj_name='improvement'):
                     content_type=content_type,
                 )
                 if not request.user.has_perm(visit_perm):
-                    return HttpResponse('403 Forbidden')#TODO:return 403 error
+                    return HttpResponse('403 Forbidden')#DONE:return 403 error
             namemodel = get_object_or_404(GenericModel, pk=model_id)
             form = GenericForm(instance=namemodel)
             #Done:Add code for state trans here
@@ -258,6 +258,7 @@ def flowlogout(request):
 def flowhome(request):
     #DONE:添加当前登录用户显示。让项目名称显示更为灵活
     #TODO:增加项目名检查，保证项目名不重复
+    #TODO:不登录也可以查看项目名称，将权限检查放到各个项目中
     if request.user.is_authenticated():
         class PrjInfo(object):
             def __init__(self, prj_name, prj_name_zh, assigned_count):
@@ -282,7 +283,7 @@ def flowprjhome(request, prj_name):
     if 'PrjAuth' in FormAndModelDict[prj_name]:
         visit_perm = 'polls.'+FormAndModelDict[prj_name]['PrjAuth']['访问权限']
         if not request.user.has_perm(visit_perm):
-            return HttpResponse('403 Forbidden')#TODO:return 403 error
+            return HttpResponse('403 Forbidden')#DONE:return 403 error
     if request.user.is_authenticated():
         prj_name_zh = FormAndModelDict[prj_name]['PrjNameZh']
         GenericModel = FormAndModelDict[prj_name]['PrjModelClass']

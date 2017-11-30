@@ -63,6 +63,15 @@ class NameForm(ModelForm):
             'created_by': forms.TextInput(attrs={'readonly': True}),
             'curent_state': forms.TextInput(attrs={'readonly': True}),
         }
+ImprovementAuth = {
+    '访问权限':'Visit',
+    '使用权限':'Exec',
+}
+ImprovementGrp = {
+    '管理员群组':'AdminGrp',  #Must in this format:'中文名':'English name'
+    '用户群组':'UserGrp',
+    '注册用户群组':'RegisteredUserGrp'
+}
 ############################################################################################################################################################
 #实验室设备使用
 class DeviceCardModel(models.Model):
@@ -87,6 +96,15 @@ class DeviceCardForm(ModelForm):
             'created_by': forms.TextInput(attrs={'readonly': True}),
             'curent_state': forms.TextInput(attrs={'readonly': True}),
         }
+DeviceManageAuth = {
+    '访问权限':'Visit',
+    '使用权限':'Exec',
+}
+DeviceManageGrp = {
+    '管理员群组':'AdminGrp',  #Must in this format:'中文名':'English name'
+    '用户群组':'UserGrp',
+    '注册用户群组':'RegisteredUserGrp'
+}
 ############################################################################################################################################################
 #捷安特售后保养
 BYCLE_TYPES_CHOICES = (
@@ -157,6 +175,15 @@ class GiantMaintainForm(ModelForm):
             'created_by': forms.TextInput(attrs={'readonly': True}),
             'curent_state': forms.TextInput(attrs={'readonly': True}),
         }
+GiantMaintainAuth = {
+    '访问权限':'Visit',
+    '使用权限':'Exec',
+}
+GiantMaintainGrp = {
+    '管理员群组':'AdminGrp',  #Must in this format:'中文名':'English name'
+    '用户群组':'UserGrp',
+    '注册用户群组':'RegisteredUserGrp'
+}
 ############################################################################################################################################################
 #上市保障问题跟踪
 CHOICE_CUSTOMER_TYPE = (
@@ -259,10 +286,6 @@ IssueTrackAuth = {
     '访问权限':'IssueTrackVisit',
     '使用权限':'IssueTrackExec',
 }
-
-
-#IssueTrackAdminGrp = Group(name='AdminGrp')
-#IssueTrackUserGrp  = Group(name='UserGrp')
 IssueTrackGrp = {
     '管理员群组':'AdminGrp',  #Must in this format:'中文名':'English name'
     '用户群组':'UserGrp',
@@ -272,8 +295,8 @@ IssueTrackGrp = {
 
 ############################################################################################################################################################
 FormAndModelDict = {
-    'improvement':{'PrjNameZh':'改进建议','PrjModelClass':NameModel,'PrjFormClass':NameForm},
-    'device_card':{'PrjNameZh':'设备管理','PrjModelClass':DeviceCardModel,'PrjFormClass':DeviceCardForm},
-    'giant_maintain':{'PrjNameZh':'捷安特预约保养','PrjModelClass':GiantMaintainModel,'PrjFormClass':GiantMaintainForm},
+    'improvement':{'PrjNameZh':'改进建议','PrjModelClass':NameModel,'PrjFormClass':NameForm,'PrjAuth':ImprovementAuth,'PrjGrp':ImprovementGrp},
+    'device_card':{'PrjNameZh':'设备管理','PrjModelClass':DeviceCardModel,'PrjFormClass':DeviceCardForm,'PrjAuth':DeviceManageAuth,'PrjGrp':DeviceManageGrp},
+    'giant_maintain':{'PrjNameZh':'捷安特预约保养','PrjModelClass':GiantMaintainModel,'PrjFormClass':GiantMaintainForm,'PrjAuth':GiantMaintainAuth,'PrjGrp':GiantMaintainGrp},
     'issue_track':{'PrjNameZh':'网上问题处理','PrjModelClass':IssueTrackModel,'PrjFormClass':IssueTrackForm,'PrjAuth':IssueTrackAuth,'PrjGrp':IssueTrackGrp}
 }
