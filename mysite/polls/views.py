@@ -216,23 +216,10 @@ def flow_create_question(request, prj_name='improvement'):
             return HttpResponse('无权限，请先注册登录')#DONE:return 403 error
 
         if 'PrjAuth' in FormAndModelDict[prj_name]:
-            exec_perm_str = prj_name+'_'+FormAndModelDict[prj_name]['PrjAuth']['使用权限']
-            GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
-            content_type = ContentType.objects.get_for_model(GenericModel)
-            try:
-                exec_perm = Permission.objects.get(
-                    codename = exec_perm_str,
-                    content_type=content_type,
-                )
-            except Permission.DoesNotExist:
-                exec_perm = Permission.objects.create(
-                    codename = exec_perm_str,
-                    name = exec_perm_str,
-                    content_type=content_type,
-                )
+            exec_perm_str = 'polls.'+prj_name+'_'+FormAndModelDict[prj_name]['PrjAuth']['使用权限']
 
-            if not request.user.has_perm(exec_perm):
-                return HttpResponse('没有创建权限，请联系该项目管理员')#DONE:return 403 error
+            if not cur_user.has_perm(exec_perm_str):
+                return HttpResponse('没有创建权限%s，请联系该项目管理员'%exec_perm_str)#DONE:return 403 error
 
  
         workflowfsm = WorkFlowFSM(prj_name=prj_name)
@@ -361,9 +348,14 @@ def flow_grp_auth_admin(request, prj_name):
     class AuthGrpAdmin(forms.Form):
         group_key = forms.ChoiceField(label='群组名称', choices=((key, key) for key in FormAndModelDict[prj_name]['PrjGrp']))
         auth_key = forms.ChoiceField(label='权限', choices=((key, key) for key in FormAndModelDict[prj_name]['PrjAuth']))
+
+    group_name_EN = FormAndModelDict[prj_name]['PrjGrp']['注册用户群组']
+    grp_name = prj_name+'_'+group_name_EN
+    user_list = User.objects.filter(groups__name=grp_name)
+    
     class AuthUsrAdmin(forms.Form):
         group_key = forms.ChoiceField(label='群组名称', choices=((key, key) for key in FormAndModelDict[prj_name]['PrjGrp']))
-        user_key = forms.ChoiceField(label='用户名', choices=((key.username, key.username) for key in User.objects.all()))
+        user_key = forms.ChoiceField(label='用户名', choices=((key.username, key.username) for key in user_list))
     if request.method == 'POST':
         if request.POST['trigger'] == "为群组添加权限":
             authform = AuthGrpAdmin(request.POST)
