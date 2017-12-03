@@ -178,6 +178,7 @@ class GiantMaintainForm(ModelForm):
 GiantMaintainAuth = {
     '访问权限':'Visit',
     '使用权限':'Exec',
+    '管理权限':'Manage',
 }
 GiantMaintainGrp = {
     '管理员群组':'AdminGrp',  #Must in this format:'中文名':'English name'
@@ -297,6 +298,6 @@ IssueTrackGrp = {
 FormAndModelDict = {
     'improvement':{'PrjNameZh':'改进建议','PrjModelClass':NameModel,'PrjFormClass':NameForm,'PrjAuth':ImprovementAuth,'PrjGrp':ImprovementGrp},
     'device_card':{'PrjNameZh':'设备管理','PrjModelClass':DeviceCardModel,'PrjFormClass':DeviceCardForm,'PrjAuth':DeviceManageAuth,'PrjGrp':DeviceManageGrp},
-    'giant_maintain':{'PrjNameZh':'捷安特预约保养','PrjModelClass':GiantMaintainModel,'PrjFormClass':GiantMaintainForm,'PrjAuth':GiantMaintainAuth,'PrjGrp':GiantMaintainGrp},
+    'giant_maintain':{'PrjNameZh':'Giant维保预约','PrjModelClass':GiantMaintainModel,'PrjFormClass':GiantMaintainForm,'PrjAuth':GiantMaintainAuth,'PrjGrp':GiantMaintainGrp},
     'issue_track':{'PrjNameZh':'网上问题处理','PrjModelClass':IssueTrackModel,'PrjFormClass':IssueTrackForm,'PrjAuth':IssueTrackAuth,'PrjGrp':IssueTrackGrp}
 }
