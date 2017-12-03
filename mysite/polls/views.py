@@ -265,25 +265,25 @@ def flowhome(request):
     #DONE:添加当前登录用户显示。让项目名称显示更为灵活
     #TODO:增加项目名检查，保证项目名不重复
     #TODO:不登录也可以查看项目名称，将权限检查放到各个项目中
+    class PrjInfo(object):
+        def __init__(self, prj_name, prj_name_zh, assigned_count):
+            self.prj_name = prj_name
+            self.prj_name_zh = prj_name_zh
+            self.assigned_count = assigned_count
+    prj_list = []
+    for prj_instance in FormAndModelDict:
+        GenericModel = FormAndModelDict[prj_instance]['PrjModelClass']
+        assigned_count = GenericModel.objects.filter(
+                                                     Q(assigned_to=request.user.username),
+                                                     ~Q(curent_state='关闭')
+                                                    ).count()
+        prj_info_node = PrjInfo(prj_name = prj_instance, prj_name_zh = FormAndModelDict[prj_instance]['PrjNameZh'], assigned_count = assigned_count)
+        prj_list.append(prj_info_node)
     if request.user.is_authenticated():
-        class PrjInfo(object):
-            def __init__(self, prj_name, prj_name_zh, assigned_count):
-                self.prj_name = prj_name
-                self.prj_name_zh = prj_name_zh
-                self.assigned_count = assigned_count
-        prj_list = []
-        for prj_instance in FormAndModelDict:
-            GenericModel = FormAndModelDict[prj_instance]['PrjModelClass']
-            assigned_count = GenericModel.objects.filter(
-                                                         Q(assigned_to=request.user.username),
-                                                         ~Q(curent_state='关闭')
-                                                        ).count()
-            prj_info_node = PrjInfo(prj_name = prj_instance, prj_name_zh = FormAndModelDict[prj_instance]['PrjNameZh'], assigned_count = assigned_count)
-            prj_list.append(prj_info_node)
         username = request.user.username
         return render(request, 'polls/flowhome.html', {'prj_list':prj_list,'username':username})
     else:
-        return render(request, 'polls/flowhome.html')
+        return render(request, 'polls/flowhome.html', {'prj_list':prj_list})
 
 def flowprjhome(request, prj_name):
     if 'PrjAuth' in FormAndModelDict[prj_name]:
