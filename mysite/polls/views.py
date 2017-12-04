@@ -11,7 +11,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from django import forms
-
+AuthDict = {
+    '管理权限':'ManageAuth',
+    '使用权限':'ExecAuth',
+    '访问权限':'VisitAuth'
+}
 
 class AuthGrpAdmin(forms.Form):
     group_key = forms.CharField(label='群组名称', max_length=100)
@@ -169,10 +173,9 @@ def myflowdetail(request, model_id, prj_name='improvement'):
             #return HttpResponseRedirect(reverse('polls:flowprjhome', kwargs={'prj_name':prj_name}))
             return HttpResponseRedirect(reverse('polls:flowdetail', kwargs={'prj_name':prj_name,'model_id':model_id}))
         else:
-            if 'PrjAuth' in FormAndModelDict[prj_name]:
-                visit_perm_str = 'polls.'+prj_name+'_'+FormAndModelDict[prj_name]['PrjAuth']['访问权限']
-                if not request.user.has_perm(visit_perm_str):
-                    return HttpResponse('您没有访问权限:%s'%visit_perm_str)
+            visit_perm_str = 'polls.'+prj_name+'_'+AuthDict['访问权限']
+            if not request.user.has_perm(visit_perm_str):
+                return HttpResponse('您没有访问权限:%s'%visit_perm_str)
             namemodel = get_object_or_404(GenericModel, pk=model_id)
             form = GenericForm(instance=namemodel)
             #Done:Add code for state trans here
@@ -210,11 +213,10 @@ def flow_create_question(request, prj_name='improvement'):
         if not cur_user.is_authenticated():
             return HttpResponse('无权限，请先注册登录')#DONE:return 403 error
 
-        if 'PrjAuth' in FormAndModelDict[prj_name]:
-            exec_perm_str = 'polls.'+prj_name+'_'+FormAndModelDict[prj_name]['PrjAuth']['使用权限']
+        exec_perm_str = 'polls.'+prj_name+'_'+AuthDict['使用权限']
 
-            if not cur_user.has_perm(exec_perm_str):
-                return HttpResponse('没有创建权限%s，请联系该项目管理员'%exec_perm_str)#DONE:return 403 error
+        if not cur_user.has_perm(exec_perm_str):
+            return HttpResponse('没有创建权限%s，请联系该项目管理员'%exec_perm_str)
 
  
         workflowfsm = WorkFlowFSM(prj_name=prj_name)
@@ -286,10 +288,9 @@ def flowhome(request):
         return render(request, 'polls/flowhome.html', {'prj_list':prj_list})
 
 def flowprjhome(request, prj_name):
-    if 'PrjAuth' in FormAndModelDict[prj_name]:
-        visit_perm = 'polls.'+prj_name+'_'+FormAndModelDict[prj_name]['PrjAuth']['访问权限']
-        if not request.user.has_perm(visit_perm):
-            return HttpResponse('您没有权限访问该项目，所需权限%s'%visit_perm)#DONE:return 403 error
+    visit_perm = 'polls.'+prj_name+'_'+AuthDict['访问权限']
+    if not request.user.has_perm(visit_perm):
+        return HttpResponse('您没有权限访问该项目，所需权限%s'%visit_perm)#DONE:return 403 error
     if request.user.is_authenticated():
         prj_name_zh = FormAndModelDict[prj_name]['PrjNameZh']
         GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
@@ -328,7 +329,7 @@ def add_prj_auth_to_group(prj_name, grp_key, auth_key):
     except Group.DoesNotExist:
         group_obj = Group.objects.create(name=grp_name)
         group_obj.save()
-    auth_val = prj_name+'_'+FormAndModelDict[prj_name]['PrjAuth'][auth_key]
+    auth_val = prj_name+'_'+AuthDict[auth_key]
     add_auth_to_group(GenericModel, group_obj, auth_val)
 
 def add_user_to_group(prj_name, grp_key, user_key):
@@ -342,7 +343,7 @@ def add_user_to_group(prj_name, grp_key, user_key):
 def flow_grp_auth_admin(request, prj_name):
     class AuthGrpAdmin(forms.Form):
         group_key = forms.ChoiceField(label='群组名称', choices=((key, key) for key in FormAndModelDict[prj_name]['PrjGrp']))
-        auth_key = forms.ChoiceField(label='权限', choices=((key, key) for key in FormAndModelDict[prj_name]['PrjAuth']))
+        auth_key = forms.ChoiceField(label='权限', choices=((key, key) for key in AuthDict))
 
     group_name_EN = FormAndModelDict[prj_name]['PrjGrp']['注册用户群组']
     grp_name = prj_name+'_'+group_name_EN
@@ -358,7 +359,7 @@ def flow_grp_auth_admin(request, prj_name):
     else:
         user_list = User.objects.filter(groups__name=grp_name)
 
-    manage_perm_str = 'polls.'+prj_name+'_'+FormAndModelDict[prj_name]['PrjAuth']['管理权限']
+    manage_perm_str = 'polls.'+prj_name+'_'+AuthDict['管理权限']
     if not (request.user.username == 'superadmin' or request.user.has_perm(manage_perm_str)):
         return HttpResponse('您没有权限管理该项目')
  
