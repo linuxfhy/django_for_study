@@ -16,6 +16,11 @@ AuthDict = {
     '使用权限':'ExecAuth',
     '访问权限':'VisitAuth'
 }
+GrpDict = {
+    '注册用户群组':'RegisteredUserGrp',
+    '用户群组':'UserGrp',
+    '管理员群组':'AdminGrp',
+}
 
 class AuthGrpAdmin(forms.Form):
     group_key = forms.CharField(label='群组名称', max_length=100)
@@ -266,7 +271,7 @@ def flowlogout(request):
 def flowhome(request):
     #DONE:添加当前登录用户显示。让项目名称显示更为灵活
     #TODO:增加项目名检查，保证项目名不重复
-    #TODO:不登录也可以查看项目名称，将权限检查放到各个项目中
+    #DONE:不登录也可以查看项目名称，将权限检查放到各个项目中
     class PrjInfo(object):
         def __init__(self, prj_name, prj_name_zh, assigned_count):
             self.prj_name = prj_name
@@ -322,7 +327,7 @@ def add_auth_to_group(GenericModel, group, auth_str):
 
 def add_prj_auth_to_group(prj_name, grp_key, auth_key):
     GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
-    group_name_EN = FormAndModelDict[prj_name]['PrjGrp'][grp_key]
+    group_name_EN = GrpDict[grp_key]
     grp_name = prj_name+'_'+group_name_EN
     try:
         group_obj = Group.objects.get(name=grp_name)
@@ -333,19 +338,19 @@ def add_prj_auth_to_group(prj_name, grp_key, auth_key):
     add_auth_to_group(GenericModel, group_obj, auth_val)
 
 def add_user_to_group(prj_name, grp_key, user_key):
-    group_name_EN = FormAndModelDict[prj_name]['PrjGrp'][grp_key]
+    group_name_EN = GrpDict[grp_key]
     grp_name = prj_name+'_'+group_name_EN
     group_obj = Group.objects.get(name=grp_name)
     user_obj = User.objects.get(username=user_key)
     user_obj.groups.add(group_obj)
 
-#TODO:这里应该增加权限控制，避免非管理员用户操作权限i
+#DONE:这里应该增加权限控制，避免非管理员用户操作权限i
 def flow_grp_auth_admin(request, prj_name):
     class AuthGrpAdmin(forms.Form):
-        group_key = forms.ChoiceField(label='群组名称', choices=((key, key) for key in FormAndModelDict[prj_name]['PrjGrp']))
+        group_key = forms.ChoiceField(label='群组名称', choices=((key, key) for key in GrpDict))
         auth_key = forms.ChoiceField(label='权限', choices=((key, key) for key in AuthDict))
 
-    group_name_EN = FormAndModelDict[prj_name]['PrjGrp']['注册用户群组']
+    group_name_EN = GrpDict['注册用户群组']
     grp_name = prj_name+'_'+group_name_EN
 
     try:
@@ -364,7 +369,7 @@ def flow_grp_auth_admin(request, prj_name):
         return HttpResponse('您没有权限管理该项目')
  
     class AuthUsrAdmin(forms.Form):
-        group_key = forms.ChoiceField(label='群组名称', choices=((key, key) for key in FormAndModelDict[prj_name]['PrjGrp']))
+        group_key = forms.ChoiceField(label='群组名称', choices=((key, key) for key in GrpDict))
         user_key = forms.ChoiceField(label='用户名', choices=((key.username, key.username) for key in user_list))
     if request.method == 'POST':
         if request.POST['trigger'] == "为群组添加权限":
@@ -405,7 +410,7 @@ def flowregist(request, prj_name='Null'):
                     return HttpResponse('User name %s has been occupied, please contact the project administrator for authority'%username)
                 user = User.objects.create_user(username, email, password)
                 user.save()
-                group_name_EN = FormAndModelDict[prj_name]['PrjGrp']['注册用户群组']
+                group_name_EN = GrpDict['注册用户群组']
                 grp_name = prj_name+'_'+group_name_EN
                 try:
                     group_obj = Group.objects.get(name=grp_name)
