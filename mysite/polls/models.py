@@ -176,12 +176,9 @@ class GiantMaintainForm(ModelForm):
             'curent_state': forms.TextInput(attrs={'readonly': True}),
         }
 GiantMaintainAuth = {
-    '访问权限':'Visit',
-    '使用权限':'Exec',
-    '管理权限':'Manage',
+    'visit':{'role':['Creator','Administrator','Processor']},
 }
 GiantMaintainGrp = {
-    'StateAuth':'AdminGrp',  #Must in this format:'中文名':'English name'
     '用户群组':'UserGrp',
     '注册用户群组':'RegisteredUserGrp'
 }

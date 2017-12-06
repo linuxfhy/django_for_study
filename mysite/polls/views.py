@@ -181,8 +181,24 @@ def myflowdetail(request, model_id, prj_name='improvement'):
             visit_perm_str = 'polls.'+prj_name+'_'+AuthDict['访问权限']
             if not request.user.has_perm(visit_perm_str):
                 return HttpResponse('您没有访问权限:%s'%visit_perm_str)
+
             namemodel = get_object_or_404(GenericModel, pk=model_id)
             form = GenericForm(instance=namemodel)
+
+            if 'PrjAuth' in FormAndModelDict[prj_name]:
+                 if 'visit' in FormAndModelDict[prj_name]['PrjAuth']:
+                     if 'role' in FormAndModelDict[prj_name]['PrjAuth']['visit']:
+                         can_visit = False
+                         for elmt in FormAndModelDict[prj_name]['PrjAuth']['visit']['role']:
+                             print('elmt is %s,created by %s,user name is %s'%(elmt,namemodel.created_by,request.user.username))
+                             if elmt == 'Creator' and namemodel.created_by == request.user.username:
+                                 can_visit = True
+                             elif elmt == 'Processor' and namemodel.assigned_to == request.user.username:
+                                 can_visit = True
+                             elif elmt == 'Administrator' and request.user.has_perm('polls.'+prj_name+'_'+AuthDict['管理权限']):
+                                 can_visit = True
+                         if not can_visit:
+                             return HttpResponse('您不能访问不是您创建的问题')
             #Done:Add code for state trans here
             triggerlist = []
             if namemodel.assigned_to in [request.user.username ,'anyone']:
