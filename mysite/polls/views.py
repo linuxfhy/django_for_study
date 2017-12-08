@@ -264,8 +264,11 @@ def myflowprocess(request):
 
 
 def flowlogin(request):
+    class LoginForm(forms.Form):
+        username = forms.CharField(label='用户名')
+        password = forms.CharField(label='密码', widget = forms.PasswordInput)
     if request.method == 'POST':
-        userform = UserForm(request.POST)
+        userform = LoginForm(request.POST)
         if userform.is_valid():
             username = userform.cleaned_data['username']
             password = userform.cleaned_data['password']
@@ -277,7 +280,7 @@ def flowlogin(request):
                 # No backend authenticated the credentials
                 return HttpResponse('login fail!!!')
     else:
-        userform = UserForm()
+        userform = LoginForm()
     return render(request, 'polls/flowlogin.html',{'form':userform})
 
 def flowlogout(request):
