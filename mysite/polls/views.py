@@ -412,8 +412,12 @@ def flow_grp_auth_admin(request, prj_name):
         return render(request, 'polls/flowgrpauthadmin.html',{'AddUserToGrpForm':AddUserToGrpForm,'AddAuthToGrpForm':AddAuthToGrpForm,'prj_name':prj_name})
 
 def flowregist(request, prj_name='Null'):
+    class UserRegForm(forms.Form):
+        username = forms.CharField(label='用户名')
+        password = forms.CharField(label='密码', widget = forms.PasswordInput)
+        email = forms.CharField(label='邮箱')
     if request.method == 'POST':
-        userform = UserForm(request.POST)
+        userform = UserRegForm(request.POST)
         if userform.is_valid():
             username = userform.cleaned_data['username']
             email = userform.cleaned_data['email']
@@ -441,7 +445,7 @@ def flowregist(request, prj_name='Null'):
                 #return HttpResponse('regist success!!!')
                 return HttpResponseRedirect(reverse('polls:flowlogin'))
     else:
-        userform = UserForm()
+        userform = UserRegForm()
         if prj_name == 'Null':
             return render(request, 'polls/flowregist.html',{'form':userform})
         else:

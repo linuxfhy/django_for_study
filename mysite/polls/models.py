@@ -157,7 +157,9 @@ class GiantMaintainModel(models.Model):
     custom_name = models.CharField(max_length=200, verbose_name="真实姓名", default='##请在此输入真实姓名##')
     device_info = models.CharField(max_length=2000, verbose_name="车辆型号", choices=BYCLE_TYPES_CHOICES)
     order_type = models.CharField(max_length=2000, verbose_name="预约类型", choices=CHOICE_ORDER_TYPES)
-    buy_date = models.DateField(max_length=2000, verbose_name="购买时间", default=timezone.now)
+    buy_date = models.DateField(max_length=2000, verbose_name="购买日期", default=timezone.now)
+    order_date = models.DateField(max_length=2000, verbose_name="预约日期", default=timezone.now,help_text='填写预约的进行维保的日期')
+    more_info = models.CharField(max_length=9000, verbose_name="备注",default="##简要描述需要处理的单车问题##")
     assigned_to   = models.CharField(max_length=200, default="anyone", verbose_name="分配给(只读)")
     created_by = models.CharField(max_length=200, default="", verbose_name="创建人(只读)")
     curent_state = models.CharField(max_length=200, verbose_name="当前状态(只读)")
@@ -171,6 +173,7 @@ class GiantMaintainForm(ModelForm):
             'summary' : forms.TextInput(attrs={'size':50}),
             'weixin' : forms.TextInput(attrs={'size':50}),
             'custom_name' : forms.TextInput(attrs={'size':50}),
+            'more_info' : forms.Textarea(attrs={'cols': 50, 'rows': 5}),
             'assigned_to': forms.TextInput(attrs={'readonly': True,'size':20}),
             'created_by': forms.TextInput(attrs={'readonly': True}),
             'curent_state': forms.TextInput(attrs={'readonly': True}),
