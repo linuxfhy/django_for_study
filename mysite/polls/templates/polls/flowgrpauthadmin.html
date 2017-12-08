@@ -1,20 +1,23 @@
+<p>==============================================================================</p>
 <form action="{% url 'polls:flowgrpauthadmin' prj_name %}" method="post">
 
 <table>
     {% csrf_token %}
     {% for field in AddAuthToGrpForm %}
         <!--<div class="fieldWrapper">-->
-            <tr><td>{{ field.label_tag }}</td><td> {{ field }}<td></tr>
-            {% if field.help_text %}
-            <p class="help">{{ field.help_text|safe }}</p>
-            {% endif %}
+            <tr>
+                <td>{{ field.label_tag }}</td><td> {{ field }}<td>
+                    {% if field.help_text %}
+                       <p class="help">{{ field.help_text|safe }}</p>
+                    {% endif %}
+            </tr>
         <!--</div>-->
     {% endfor %}
 </table>
     <input type="submit" value="为群组添加权限" name='trigger'/>
 
 </form>
-
+<p>==============================================================================</p>
 <form action="{% url 'polls:flowgrpauthadmin' prj_name %}" method="post">
 
 <table>
@@ -31,6 +34,7 @@
     <input type="submit" value="添加用户到群组" name='trigger'/>
 
 </form>
+<p>==============================================================================</p>
 <li><a href="{% url 'polls:flowhome' %}">返回首页</a></li>
 <li><a href="{% url 'polls:flowprjhome' prj_name %}">返回项目首页</a></li>
 
