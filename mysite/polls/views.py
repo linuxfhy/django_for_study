@@ -225,9 +225,10 @@ def flow_create_question(request, prj_name='improvement'):
         # check whether it's valid:
         if form.is_valid():
             #TODO:check model field and database colum
-            form.save()
+            model_instance = form.save()
             #return HttpResponse("Hello, world. Thanks for submit.")
-            return HttpResponseRedirect(reverse('polls:PrjIndexForCurUser', kwargs={'prj_name':prj_name}))
+            #return HttpResponseRedirect(reverse('polls:PrjIndexForCurUser', kwargs={'prj_name':prj_name}))
+            return HttpResponseRedirect(reverse('polls:flowdetail', kwargs={'prj_name':prj_name,'model_id':model_instance.id}))
     # if a GET (or any other method) we'll create a blank form
     else:
         cur_user = request.user
