@@ -190,7 +190,6 @@ def myflowdetail(request, model_id, prj_name='improvement'):
                      if 'role' in FormAndModelDict[prj_name]['PrjAuth']['visit']:
                          can_visit = False
                          for elmt in FormAndModelDict[prj_name]['PrjAuth']['visit']['role']:
-                             print('elmt is %s,created by %s,user name is %s'%(elmt,namemodel.created_by,request.user.username))
                              if elmt == 'Creator' and namemodel.created_by == request.user.username:
                                  can_visit = True
                              elif elmt == 'Processor' and namemodel.assigned_to == request.user.username:
