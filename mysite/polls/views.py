@@ -11,6 +11,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from django import forms
+
+from django.http import HttpResponse
+from xlwt import *
+import os
+from io import StringIO,BytesIO
 AuthDict = {
     '管理权限':'ManageAuth',
     '使用权限':'ExecAuth',
@@ -453,6 +458,38 @@ def flowregist(request, prj_name='Null'):
 
 ##############################For Auth Admin:End  ##############################
 
+##############################For Data Import And Export:Begin##############################
+def flow_export_excel(request, prj_name='improvement'):
+    GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
+    obj_list = GenericModel.objects.order_by('id')[:]
+    ws = Workbook(encoding='utf-8')
+    w = ws.add_sheet(u"数据报表第一页")
+    col_number = 0
+    for field in obj_list[0]._meta.get_fields():
+        w.write(0, col_number, field.verbose_name)
+        col_number = col_number + 1
+    row_number = 1
+    for obj in obj_list:
+        col_number = 0
+        for field in obj_list[0]._meta.get_fields():
+            field_value = getattr(obj, field.name)
+            w.write(row_number, col_number, field_value)
+            col_number = col_number + 1
+        row_number = row_number + 1
+    filename = prj_name+'.xls'
+    exist_file = os.path.exists(filename)
+    if exist_file:
+        os.remove(filename)
+    ws.save(filename)
+    ############################
+    sio = BytesIO()
+    ws.save(sio)
+    sio.seek(0)
+    response = HttpResponse(sio.getvalue(), content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename='+filename
+    response.write(sio.getvalue())
+    return response
+##############################For Data Import And Export:End##############################
 
 
 
