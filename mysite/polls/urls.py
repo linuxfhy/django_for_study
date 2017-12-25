@@ -17,9 +17,9 @@ urlpatterns = [
     url(r'^(?P<prj_name>[a-zA-Z0-9_]+)/grpauthadmin/$', views.flow_grp_auth_admin, name='flowgrpauthadmin'),
     url(r'^(?P<prj_name>[a-zA-Z0-9_]+)/exportdata$', views.flow_export_excel, name='flowprjexport'),
     url(r'^(?P<prj_name>[a-zA-Z0-9_]+)/(?P<model_id>[0-9]+)/detail/$', views.myflowdetail, name='flowdetail'),
-    url(r'^tmp$', views.myflowprocess, name='myflowprocess'),
-    url(r'^regist$', views.flowregist, name='flowregist'),
-    url(r'^login$', views.flowlogin, name='flowlogin'),
-    url(r'^logout$', views.flowlogout, name='flowlogout'),
-    url(r'^home$', views.flowhome, name='flowhome')
+    url(r'^tmp/$', views.myflowprocess, name='myflowprocess'),
+    url(r'^regist/$', views.flowregist, name='flowregist'),
+    url(r'^login/$', views.flowlogin, name='flowlogin'),
+    url(r'^logout/$', views.flowlogout, name='flowlogout'),
+    url(r'^home/$', views.flowhome, name='flowhome')
 ]

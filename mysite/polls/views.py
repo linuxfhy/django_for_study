@@ -332,7 +332,7 @@ def flowprjhome(request, prj_name):
         return render(request, 'polls/flowhome.html')
 
 ##############################For Auth Admin:Begin##############################
-def add_auth_to_group(GenericModel, group, auth_str):
+def add_auth_to_group(GenericModel, group, auth_str, op):
     content_type = ContentType.objects.get_for_model(GenericModel)
     try:
         permission = Permission.objects.get(
@@ -346,10 +346,13 @@ def add_auth_to_group(GenericModel, group, auth_str):
             content_type=content_type,
         )
         permission.save()
-    group.permissions.add(permission)
+    if op == 'add':
+        group.permissions.add(permission)
+    elif op == 'delete':
+        group.permissions.remove(permission)
     group.save() #fix bug：Exception Value:"<Group: AdminGrp>" needs to have a value for field "id" before this many-to-many relationship can be used.
 
-def add_prj_auth_to_group(prj_name, grp_key, auth_key):
+def add_prj_auth_to_group(prj_name, grp_key, auth_key, op='add'):
     GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
     group_name_EN = GrpDict[grp_key]
     grp_name = prj_name+'_'+group_name_EN
@@ -359,14 +362,17 @@ def add_prj_auth_to_group(prj_name, grp_key, auth_key):
         group_obj = Group.objects.create(name=grp_name)
         group_obj.save()
     auth_val = prj_name+'_'+AuthDict[auth_key]
-    add_auth_to_group(GenericModel, group_obj, auth_val)
+    add_auth_to_group(GenericModel, group_obj, auth_val, op)
 
-def add_user_to_group(prj_name, grp_key, user_key):
+def add_user_to_group(prj_name, grp_key, user_key, op):
     group_name_EN = GrpDict[grp_key]
     grp_name = prj_name+'_'+group_name_EN
     group_obj = Group.objects.get(name=grp_name)
     user_obj = User.objects.get(username=user_key)
-    user_obj.groups.add(group_obj)
+    if op == 'add':
+        user_obj.groups.add(group_obj)
+    elif op == 'delete':
+        user_obj.groups.remove(group_obj)
 
 #DONE:这里应该增加权限控制，避免非管理员用户操作权限i
 def flow_grp_auth_admin(request, prj_name):
@@ -403,13 +409,25 @@ def flow_grp_auth_admin(request, prj_name):
             if authform.is_valid():
                 grp_key = authform.cleaned_data['group_key']
                 for auth_key in authform.cleaned_data['auth_key']:
-                    add_prj_auth_to_group(prj_name, grp_key, auth_key)
+                    add_prj_auth_to_group(prj_name, grp_key, auth_key, op='add')
+        elif request.POST['trigger'] == "从群组删除权限":
+            authform = AuthGrpAdmin(request.POST)
+            if authform.is_valid():
+                grp_key = authform.cleaned_data['group_key']
+                for auth_key in authform.cleaned_data['auth_key']:
+                    add_prj_auth_to_group(prj_name, grp_key, auth_key, op='delete')
         elif request.POST['trigger'] == "添加用户到群组":
             GrpUserForm = AuthUsrAdmin(request.POST)
             if GrpUserForm.is_valid():
                 grp_key = GrpUserForm.cleaned_data['group_key']
                 for user_key in GrpUserForm.cleaned_data['user_key']:
-                    add_user_to_group(prj_name, grp_key, user_key)
+                    add_user_to_group(prj_name, grp_key, user_key, op='add')
+        elif request.POST['trigger'] == "从群组移除用户":
+            GrpUserForm = AuthUsrAdmin(request.POST)
+            if GrpUserForm.is_valid():
+                grp_key = GrpUserForm.cleaned_data['group_key']
+                for user_key in GrpUserForm.cleaned_data['user_key']:
+                    add_user_to_group(prj_name, grp_key, user_key, op='delete')
         return HttpResponseRedirect(reverse('polls:flowgrpauthadmin', kwargs={'prj_name':prj_name}))
     else:
         AddAuthToGrpForm = AuthGrpAdmin()
@@ -459,9 +477,12 @@ def flowregist(request, prj_name='Null'):
 ##############################For Auth Admin:End  ##############################
 
 ##############################For Data Import And Export:Begin##############################
+#TODO:Process exception that model instance doesn't exist
 def flow_export_excel(request, prj_name='improvement'):
     GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
     obj_list = GenericModel.objects.order_by('id')[:]
+    if not obj_list:
+        return HttpResponse('没有数据记录可以导出')
     ws = Workbook(encoding='utf-8')
     w = ws.add_sheet(u"数据报表第一页")
     col_number = 0
