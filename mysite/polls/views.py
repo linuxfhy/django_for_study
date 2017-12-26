@@ -512,8 +512,20 @@ def flow_export_excel(request, prj_name='improvement'):
     return response
 ##############################For Data Import And Export:End##############################
 
-
-
+##############################For Delete Item From Database:Begin##############################
+def flow_muti_item_process(request, prj_name):
+    admin_perm = 'polls.'+prj_name+'_'+AuthDict['管理权限']
+    if not request.user.has_perm(admin_perm):
+        return HttpResponse('您没有权限删除问题，请联系项目管理员')
+    check_box_list = request.POST.getlist("check_box_list")
+    GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
+    if request.method == 'POST':
+        for elmt in check_box_list:
+           GenericModel.objects.get(id=elmt).delete()
+        return HttpResponseRedirect(reverse('polls:myflowindex', kwargs={'prj_name':prj_name}))
+    else:
+        return HttpResponse('Get')
+##############################For Delete Item From Database:Begin##############################
 
 
 
