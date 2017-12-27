@@ -60,6 +60,12 @@ FSM_TRANS_GINAT_MAINTAIN_TRACK = [
     {'source': '创建保养预约单',	'trigger': '提交预约单',	'dest': '等待保养',		'trans_condition':{},   'trans_action':{'assign_to':{'constant':'tanluzhe7'}}},
     {'source': '等待保养',		'trigger': '完成保养',	        'dest': '关闭',		        'trans_condition':{},   'trans_action':{}}
 ]
+############################################################################################################################################################
+#OAK_ESS早期支持策略_订单支持
+FSM_TRANS_ESS_ORDER_SUPPORT = [
+    {'source': '打开',	'trigger': '更新进展',	'dest': '打开', 'trans_condition':{},   'trans_action':{}},
+    {'source': '打开',	'trigger': '关闭',	'dest': '关闭', 'trans_condition':{},   'trans_action':{}}
+]
 
 ############################################################################################################################################################
 #定义各个项目对应的状态转换表
@@ -67,7 +73,10 @@ TRANS_TABLE_DICT = {
     'improvement':FSM_TRANS_TABLE,
     'device_card':FSM_TRANS_TABLE_DEVICECARD,
     'issue_track':FSM_TRANS_ISSUE_TRACK,
-    'giant_maintain':FSM_TRANS_GINAT_MAINTAIN_TRACK
+    'giant_maintain':FSM_TRANS_GINAT_MAINTAIN_TRACK,
+    'ESS_OrderSupport':FSM_TRANS_ESS_ORDER_SUPPORT,
+    'ESS_SupplySpport':FSM_TRANS_ESS_ORDER_SUPPORT,
+    'ESS_CustomerIssue':FSM_TRANS_ESS_ORDER_SUPPORT
 }
 ############################################################################################################################################################
 class FsmStateTrans(object):

@@ -292,12 +292,111 @@ IssueTrackGrp = {
     '用户群组':'UserGrp',
     '注册用户群组':'RegisteredUserGrp'
 }
+############################################################################################################################################################
+#OAK_ESS早期支持策略_订单支持
+#项目	主要工作内容	客户名称	订单数量	软件版本	负责人	转维负责人	完成日期	当前进展
+
+class ESS_OrderSupportModel(models.Model):
+    summary = models.CharField(max_length=200, verbose_name="项目")
+    content = models.CharField(max_length=5000, verbose_name="主要工作内容")
+    customer = models.CharField(max_length=200, verbose_name="客户名称")
+    order_number = models.CharField(max_length=200, default="0", verbose_name="订单数量")
+    software_ver = models.CharField(max_length=200, default="0", verbose_name="软件版本")
+    responser = models.CharField(max_length=200, default="0", verbose_name="负责人")
+    responser_to_maitain = models.CharField(max_length=200, default="0", verbose_name="转维负责人")
+    deadline = models.CharField(max_length=200, default="0", verbose_name="完成日期")
+    current_process = models.CharField(max_length=5000, verbose_name="当前进展",default="##在此更新进展##")
+    assigned_to   = models.CharField(max_length=200, default="", verbose_name="当前处理人(只读)")
+    created_by = models.CharField(max_length=200, default="", verbose_name="创建人(只读)")
+    curent_state = models.CharField(max_length=200, verbose_name="当前状态(只读)")
+
+class ESS_OrderSupportForm(ModelForm):
+    class Meta:
+        model = ESS_OrderSupportModel
+        fields = '__all__'
+        widgets = {
+            'summary' : forms.TextInput(attrs={'size':78}),
+            'customer' : forms.TextInput(attrs={'size':78}),
+            'current_process' : forms.Textarea(attrs={'cols': 66, 'rows': 5}),
+            'content' : forms.Textarea(attrs={'cols': 66, 'rows': 5}),
+            #'viewer_advice' : forms.Textarea(attrs={'cols': 80, 'rows': 5}),
+            'assigned_to': forms.TextInput(attrs={'readonly': True,'size':20}),
+            'created_by': forms.TextInput(attrs={'readonly': True}),
+            'curent_state': forms.TextInput(attrs={'readonly': True}),
+        }
+############################################################################################################################################################
+#OAK_ESS早期支持策略_客诉问题
+class ESS_CustomerIssueModel(models.Model):
+    summary = models.CharField(max_length=200, verbose_name="项目")
+    content = models.CharField(max_length=5000, verbose_name="主要工作内容")
+    customer = models.CharField(max_length=200, verbose_name="客户名称")
+    order_number = models.CharField(max_length=200, default="0", verbose_name="订单数量")
+    software_ver = models.CharField(max_length=200, default="0", verbose_name="软件版本")
+    responser = models.CharField(max_length=200, default="0", verbose_name="负责人")
+    responser_to_maitain = models.CharField(max_length=200, default="0", verbose_name="转维负责人")
+    deadline = models.CharField(max_length=200, default="0", verbose_name="完成日期")
+    current_process = models.CharField(max_length=5000, verbose_name="当前进展",default="##在此更新进展##")
+    assigned_to   = models.CharField(max_length=200, default="", verbose_name="当前处理人(只读)")
+    created_by = models.CharField(max_length=200, default="", verbose_name="创建人(只读)")
+    curent_state = models.CharField(max_length=200, verbose_name="当前状态(只读)")
+
+class ESS_CustomerIssueForm(ModelForm):
+    class Meta:
+        model = ESS_CustomerIssueModel
+        fields = '__all__'
+        widgets = {
+            'summary' : forms.TextInput(attrs={'size':78}),
+            'customer' : forms.TextInput(attrs={'size':78}),
+            'current_process' : forms.Textarea(attrs={'cols': 66, 'rows': 5}),
+            'content' : forms.Textarea(attrs={'cols': 66, 'rows': 5}),
+            #'viewer_advice' : forms.Textarea(attrs={'cols': 80, 'rows': 5}),
+            'assigned_to': forms.TextInput(attrs={'readonly': True,'size':20}),
+            'created_by': forms.TextInput(attrs={'readonly': True}),
+            'curent_state': forms.TextInput(attrs={'readonly': True}),
+        }
+############################################################################################################################################################
+#OAK_ESS早期支持策略_供货支撑协调
+class ESS_SupplySpportModel(models.Model):
+    summary = models.CharField(max_length=200, verbose_name="项目")
+    content = models.CharField(max_length=5000, verbose_name="主要工作内容")
+    customer = models.CharField(max_length=200, verbose_name="客户名称")
+    order_number = models.CharField(max_length=200, default="0", verbose_name="订单数量")
+    software_ver = models.CharField(max_length=200, default="0", verbose_name="软件版本")
+    responser = models.CharField(max_length=200, default="0", verbose_name="负责人")
+    responser_to_maitain = models.CharField(max_length=200, default="0", verbose_name="转维负责人")
+    deadline = models.CharField(max_length=200, default="0", verbose_name="完成日期")
+    current_process = models.CharField(max_length=5000, verbose_name="当前进展",default="##在此更新进展##")
+    assigned_to   = models.CharField(max_length=200, default="", verbose_name="当前处理人(只读)")
+    created_by = models.CharField(max_length=200, default="", verbose_name="创建人(只读)")
+    curent_state = models.CharField(max_length=200, verbose_name="当前状态(只读)")
+
+class ESS_SupplySpportForm(ModelForm):
+    class Meta:
+        model = ESS_SupplySpportModel
+        fields = '__all__'
+        widgets = {
+            'summary' : forms.TextInput(attrs={'size':78}),
+            'customer' : forms.TextInput(attrs={'size':78}),
+            'current_process' : forms.Textarea(attrs={'cols': 66, 'rows': 5}),
+            'content' : forms.Textarea(attrs={'cols': 66, 'rows': 5}),
+            #'viewer_advice' : forms.Textarea(attrs={'cols': 80, 'rows': 5}),
+            'assigned_to': forms.TextInput(attrs={'readonly': True,'size':20}),
+            'created_by': forms.TextInput(attrs={'readonly': True}),
+            'curent_state': forms.TextInput(attrs={'readonly': True}),
+        }
 
 
 ############################################################################################################################################################
+PRJ_NAME_LIST = [
+     'improvement', 'device_card', 'giant_maintain', 'issue_track', 'ESS_OrderSupport',
+     'ESS_CustomerIssue', 'ESS_SupplySpport'
+]
 FormAndModelDict = {
     'improvement':{'PrjNameZh':'改进建议','PrjModelClass':NameModel,'PrjFormClass':NameForm,'PrjAuth':ImprovementAuth,'PrjGrp':ImprovementGrp},
     'device_card':{'PrjNameZh':'设备管理','PrjModelClass':DeviceCardModel,'PrjFormClass':DeviceCardForm,'PrjAuth':DeviceManageAuth,'PrjGrp':DeviceManageGrp},
     'giant_maintain':{'PrjNameZh':'Giant维保预约','PrjModelClass':GiantMaintainModel,'PrjFormClass':GiantMaintainForm,'PrjAuth':GiantMaintainAuth,'PrjGrp':GiantMaintainGrp},
-    'issue_track':{'PrjNameZh':'网上问题处理','PrjModelClass':IssueTrackModel,'PrjFormClass':IssueTrackForm,'PrjAuth':IssueTrackAuth,'PrjGrp':IssueTrackGrp}
+    'issue_track':{'PrjNameZh':'网上问题处理','PrjModelClass':IssueTrackModel,'PrjFormClass':IssueTrackForm,'PrjAuth':IssueTrackAuth,'PrjGrp':IssueTrackGrp},
+    'ESS_OrderSupport':{'PrjNameZh':'OAK_ESS订单支持','PrjModelClass':ESS_OrderSupportModel,'PrjFormClass':ESS_OrderSupportForm},
+    'ESS_CustomerIssue':{'PrjNameZh':'OAK_ESS客诉问题','PrjModelClass':ESS_CustomerIssueModel,'PrjFormClass':ESS_CustomerIssueForm},
+    'ESS_SupplySpport':{'PrjNameZh':'OAK_ESS供货支持','PrjModelClass':ESS_SupplySpportModel,'PrjFormClass':ESS_SupplySpportForm}
 }

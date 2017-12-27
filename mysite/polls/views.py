@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from .models import Choice, Question, NameModel, UserModel
-from .models import NameForm, UserForm, FormAndModelDict
+from .models import NameForm, UserForm, FormAndModelDict, PRJ_NAME_LIST
 from .FSM import WorkFlowFSM
 from django.contrib.auth.models import User, Permission,Group
 from django.contrib.auth import authenticate, login, logout
@@ -302,7 +302,7 @@ def flowhome(request):
             self.prj_name_zh = prj_name_zh
             self.assigned_count = assigned_count
     prj_list = []
-    for prj_instance in FormAndModelDict:
+    for prj_instance in PRJ_NAME_LIST:
         GenericModel = FormAndModelDict[prj_instance]['PrjModelClass']
         assigned_count = GenericModel.objects.filter(
                                                      Q(assigned_to=request.user.username),
