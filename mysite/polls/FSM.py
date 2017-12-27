@@ -76,7 +76,9 @@ TRANS_TABLE_DICT = {
     'giant_maintain':FSM_TRANS_GINAT_MAINTAIN_TRACK,
     'ESS_OrderSupport':FSM_TRANS_ESS_ORDER_SUPPORT,
     'ESS_SupplySpport':FSM_TRANS_ESS_ORDER_SUPPORT,
-    'ESS_CustomerIssue':FSM_TRANS_ESS_ORDER_SUPPORT
+    'ESS_CustomerIssue':FSM_TRANS_ESS_ORDER_SUPPORT,
+    'ESS_MasterBranchSync':FSM_TRANS_ESS_ORDER_SUPPORT,
+    'ESS_LeftBugSolve':FSM_TRANS_ESS_ORDER_SUPPORT
 }
 ############################################################################################################################################################
 class FsmStateTrans(object):
