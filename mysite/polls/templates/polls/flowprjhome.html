@@ -36,6 +36,14 @@ html,body,.parent{height: 100%; overflow: hidden;}
             <p>待处理条目[0]</p>
         {% endif %}
     </div>
-    <div class="right">right</div>
+    <div class="right">
+        {% if help_msg %}
+            {% for item in help_msg %}
+                <br>
+                    {{ item }}
+                </br>
+            {% endfor %}
+        {% endif %}
+    </div>
     <div class="bottom">bottom</div>
 </div>

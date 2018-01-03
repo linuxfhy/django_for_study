@@ -436,6 +436,7 @@ class ESS_LeftBugSolveForm(ModelForm):
             'created_by': forms.TextInput(attrs={'readonly': True}),
             'curent_state': forms.TextInput(attrs={'readonly': True}),
         }
+help_msg = ['帮助信息：','段落一','段落二','段落三']
 ############################################################################################################################################################
 #OAK_ESS早期支持策略_供货支撑协调
 
@@ -454,5 +455,5 @@ FormAndModelDict = {
     'ESS_CustomerIssue':{'PrjNameZh':'OAK_ESS客诉问题','PrjModelClass':ESS_CustomerIssueModel,'PrjFormClass':ESS_CustomerIssueForm},
     'ESS_SupplySpport':{'PrjNameZh':'OAK_ESS供货支持','PrjModelClass':ESS_SupplySpportModel,'PrjFormClass':ESS_SupplySpportForm},
     'ESS_MasterBranchSync':{'PrjNameZh':'OAK_ESS主线同步','PrjModelClass':ESS_MasterBranchSyncModel,'PrjFormClass':ESS_MasterBranchSyncForm},
-    'ESS_LeftBugSolve':{'PrjNameZh':'OAK_ESS遗留BUG解决','PrjModelClass':ESS_LeftBugSolveModel,'PrjFormClass':ESS_LeftBugSolveForm}
+    'ESS_LeftBugSolve':{'PrjNameZh':'OAK_ESS遗留BUG解决','PrjModelClass':ESS_LeftBugSolveModel,'PrjFormClass':ESS_LeftBugSolveForm,'help_msg':help_msg}
 }

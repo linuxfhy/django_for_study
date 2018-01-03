@@ -327,7 +327,10 @@ def flowprjhome(request, prj_name):
                                                Q(assigned_to=request.user.username)|Q(assigned_to='anyone'),
                                                ~Q(curent_state='关闭')
                                               ).order_by('id')[:]
-        return render(request, 'polls/flowprjhome.html',{'prj_name':prj_name,'prj_name_zh':prj_name_zh, 'obj_list':obj_list})
+        render_para = {'prj_name':prj_name,'prj_name_zh':prj_name_zh, 'obj_list':obj_list}
+        if 'help_msg' in FormAndModelDict[prj_name]:
+            render_para['help_msg'] = FormAndModelDict[prj_name]['help_msg']
+        return render(request, 'polls/flowprjhome.html', render_para)
     else:
         return render(request, 'polls/flowhome.html')
 
