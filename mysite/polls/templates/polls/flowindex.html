@@ -14,7 +14,7 @@
         {% for namemodel in latest_namemodel_list %}
             <tr>
                 <td><input type="checkbox" value={{ namemodel.id }} name="check_box_list"/></td>
-                <td><a href="{% url 'polls:flowdetail' prj_name namemodel.id %}">question_{{ namemodel.id }}</a></td>
+                <td><a href="{% url 'polls:flowdetail' prj_name namemodel.id %}">Item_{{ namemodel.id }}</a></td>
                 <td>{{ namemodel.summary }}</td>
                 <td>{{ namemodel.curent_state }}</td>
                 <td>{{ namemodel.assigned_to }}</td>
