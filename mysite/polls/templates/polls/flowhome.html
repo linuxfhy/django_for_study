@@ -1,33 +1,53 @@
 {% load static %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}" />
-<p>【TaskSteper】积跬步，至千里</p>
 
-{% if prj_list %}
-    <table>
-        {% csrf_token %}
-        {% if username %}
-            <tr><td>Hello, {{ username }}</td><td>【<a href="{% url 'polls:flowlogout' %}">注销</a>】</td></tr>
+<style type="text/css">
+html,body,.parent{height: 100%; overflow: hidden;}
+        .top{position: absolute; top: 0; left: 0; right: 0; height: 0; background-color: #F3F3FA; height: 50px;}
+        .left{position: absolute; top: 50px; left: 0;bottom: 50px; width: 75%; background-color: #E0E0E0;overflow:auto;}
+        .right{position: absolute; top: 50px; left: 75%; right: 0; bottom: 50px; background-color: #FFFFCE; overflow: hidden;}
+        .bottom{position: absolute; left: 0; right: 0; bottom: 0; height: 50px; background-color: #F3F3FA;}
+</style>
+<div class="parent">
+    <div class="top">
+        <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}" />
+        <p>【TaskSteper】积跬步，至千里</p>
+    </div>
+    <div class="left">
+        {% if prj_list %}
+            <table>
+                {% csrf_token %}
+                {% if username %}
+                    <tr><td>Hello, {{ username }}</td><td>【<a href="{% url 'polls:flowlogout' %}">注销</a>】</td></tr>
+                {% else %}
+                    <ol>
+                        <li>请先<a href="{% url 'polls:flowlogin' %}">登录</a>；</li>
+                        <li>如果没有账号，请先在所需项目注册，并联系管理员添加权限</li>
+                    </ol>
+                {% endif %}
+                <tr><td>项目名称</td><td>待办数目</td><td>权限管理</td><td>创建条目</td><td>注册项目用户</td></tr>
+                {% for cur_prj in prj_list %}
+                    <tr>
+                        <td>♦<a href="{% url 'polls:flowprjhome' cur_prj.prj_name %}">{{ cur_prj.prj_name_zh }}</a></td>
+                        <td>[{{ cur_prj.assigned_count }}]</td>
+                        <td><a href="{% url 'polls:flowgrpauthadmin' cur_prj.prj_name %}">管理</a></td>
+                        <td><a href="{% url 'polls:myflow' cur_prj.prj_name %}">创建</a></td>
+                        <td><a href="{% url 'polls:flowprjregist' cur_prj.prj_name %}">注册</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
         {% else %}
-            <ol>
-                <li>请先<a href="{% url 'polls:flowlogin' %}">登录</a>；</li>
-                <li>如果没有账号，请先在所需项目注册，并联系管理员添加权限</li>
-            </ol>
+            <p>请先登录；如果没有账号，请先注册</p>
+            <li><a href="{% url 'polls:flowregist' %}">注册</a></li>
+            <li><a href="{% url 'polls:flowlogin' %}">登录</a></li>
         {% endif %}
-        <tr><td>项目名称</td><td>待办数目</td><td>权限管理</td><td>创建条目</td><td>注册项目用户</td></tr>
-        {% for cur_prj in prj_list %}
-            <tr>
-                <td>♦<a href="{% url 'polls:flowprjhome' cur_prj.prj_name %}">{{ cur_prj.prj_name_zh }}</a></td>
-                <td>[{{ cur_prj.assigned_count }}]</td>
-                <td><a href="{% url 'polls:flowgrpauthadmin' cur_prj.prj_name %}">管理</a></td>
-                <td><a href="{% url 'polls:myflow' cur_prj.prj_name %}">创建</a></td>
-                <td><a href="{% url 'polls:flowprjregist' cur_prj.prj_name %}">注册</a></td>
-            </tr>
-        {% endfor %}
-    </table>
-{% else %}
-    <p>请先登录；如果没有账号，请先注册</p>
-    <li><a href="{% url 'polls:flowregist' %}">注册</a></li>
-    <li><a href="{% url 'polls:flowlogin' %}">登录</a></li>
-{% endif %}
-
+    </div>
+    <div class="right">
+        <br>【帮助信息】:</br>
+        <br>如果计划使用某个项目，请先在该项目注册，然后联系项目管理员添加权限；</br>
+        <br>如果项目归属于项目群，则只需要在项目群中的一个项目中注册，使用具体项目时联系管理员开通权限，
+            无需在项目群的每个项目注册(暂时不支持项目群功能,等后续实现)
+        </br>
+    </div>
+    <div class="bottom">bottom</div>
+</div>
