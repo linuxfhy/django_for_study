@@ -63,15 +63,11 @@ class NameForm(ModelForm):
             'created_by': forms.TextInput(attrs={'readonly': True}),
             'curent_state': forms.TextInput(attrs={'readonly': True}),
         }
-ImprovementAuth = {
-    '访问权限':'Visit',
-    '使用权限':'Exec',
-}
-ImprovementGrp = {
-    '管理员群组':'AdminGrp',  #Must in this format:'中文名':'English name'
-    '用户群组':'UserGrp',
-    '注册用户群组':'RegisteredUserGrp'
-}
+helpmsg_imprvmt = [
+    '【帮助信息】：',
+    '【主干流程】{环节，责任人}（触发条件）：',
+    '{提交建议,创建人}(提交评审){改进建议价值评审,改进建议评审人}(指定实施人){改进建议实施,改建建议实施人}(实施结果提交评审){实施结果评审,改进建议评审人}(落地关闭){关闭,}'
+]
 ############################################################################################################################################################
 #实验室设备使用
 class DeviceCardModel(models.Model):
@@ -447,7 +443,7 @@ PRJ_NAME_LIST = [
      'ESS_CustomerIssue', 'ESS_SupplySpport', 'ESS_MasterBranchSync', 'ESS_LeftBugSolve'
 ]
 FormAndModelDict = {
-    'improvement':{'PrjNameZh':'改进建议','PrjModelClass':NameModel,'PrjFormClass':NameForm,'PrjAuth':ImprovementAuth,'PrjGrp':ImprovementGrp},
+    'improvement':{'PrjNameZh':'改进建议','PrjModelClass':NameModel,'PrjFormClass':NameForm,'PrjAuth':ImprovementAuth,'PrjGrp':ImprovementGrp, 'help_msg':helpmsg_imprvmt},
     'device_card':{'PrjNameZh':'设备管理','PrjModelClass':DeviceCardModel,'PrjFormClass':DeviceCardForm,'PrjAuth':DeviceManageAuth,'PrjGrp':DeviceManageGrp},
     'giant_maintain':{'PrjNameZh':'Giant维保预约','PrjModelClass':GiantMaintainModel,'PrjFormClass':GiantMaintainForm,'PrjAuth':GiantMaintainAuth,'PrjGrp':GiantMaintainGrp},
     'issue_track':{'PrjNameZh':'网上问题处理','PrjModelClass':IssueTrackModel,'PrjFormClass':IssueTrackForm,'PrjAuth':IssueTrackAuth,'PrjGrp':IssueTrackGrp},
