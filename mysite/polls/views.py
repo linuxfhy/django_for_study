@@ -12,7 +12,7 @@ from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from django import forms
 
-from django.http import HttpResponse
+from django.http import HttpResponse, StreamingHttpResponse
 from xlwt import *
 import os
 from io import StringIO,BytesIO
@@ -529,6 +529,22 @@ def flow_muti_item_process(request, prj_name):
     else:
         return HttpResponse('Get')
 ##############################For Delete Item From Database:Begin##############################
+##############################For Download File:Begin##############################
+def flow_file_download(request):
+    def file_iterator(file_name, chunk_size=512):
+        with open(file_name,'rb') as f:
+            while True:
+                c = f.read(chunk_size)
+                if c:
+                    yield c
+                else:
+                    break
+    file_name = "HelpDoc.pdf"
+    response = StreamingHttpResponse(file_iterator(file_name))
+    response['Content-Type'] = 'application/octet-stream'
+    response['Content-Disposition'] = 'attachment;filename="{0}"'.format(file_name)
+    return response
+##############################For Download File:End  ##############################
 
 
 
