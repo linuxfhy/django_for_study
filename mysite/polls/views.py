@@ -542,7 +542,7 @@ def flow_file_download(request):
     file_name = "HelpDoc.pdf"
     response = StreamingHttpResponse(file_iterator(file_name))
     response['Content-Type'] = 'application/octet-stream'
-    response['Content-Disposition'] = 'attachment;filename="{0}"'.format(file_name)
+    response['Content-Disposition'] = 'attachment;filename="{0}"'.format('README.pdf') #(file_name)
     return response
 ##############################For Download File:End  ##############################
 

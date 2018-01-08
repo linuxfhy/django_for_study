@@ -444,12 +444,41 @@ class ESS_LeftBugSolveForm(ModelForm):
 help_msg = ['帮助信息：','段落一','段落二','段落三']
 ############################################################################################################################################################
 #OAK_ESS早期支持策略_供货支撑协调
+############################################################################################################################################################
+#OAK_版本发布
+release_note_msg="##此处按小组填写版本release notes##\n【Driver】:\n1.xxx\n2.xxx\n【EN】:\n1.xxx\n2.xxx\n"
+#fw_ver_info="【BIOS】:\n【8733】:\n【8796】:\n【BMC】:\n【NODE_CPLD】:\n【CMC】:\n【CMC_CPLD】:\n"
+class VerReleaseModel(models.Model):
+    summary = models.CharField(max_length=200, verbose_name="版本号")
+    commit_id = models.CharField(max_length=200, verbose_name="git_commit_id")
+    release_date = models.DateField(max_length=2000, verbose_name="发布日期", default=timezone.now)
+    build_info = models.CharField(max_length=9000, verbose_name="构建信息",default="##此处填写构建信息，可从上一个版本拷贝进行修改##")
+    release_notes = models.CharField(max_length=9000, verbose_name="release_notes",default=release_note_msg)
+    #fw_info = models.CharField(max_length=900, verbose_name="固件信息",default=fw_ver_info)
+    assigned_to   = models.CharField(max_length=200, default="anyone", verbose_name="当前处理人(只读)")
+    created_by = models.CharField(max_length=200, default="", verbose_name="创建人(只读)")
+    curent_state = models.CharField(max_length=200, verbose_name="当前状态(只读)")
 
-
+class VerReleaseForm(ModelForm):
+    class Meta:
+        model = VerReleaseModel
+        fields = '__all__'
+        widgets = {
+            'summary' : forms.TextInput(attrs={'size':68}),
+            'commit_id' : forms.TextInput(attrs={'size':68}),
+            'build_info' : forms.Textarea(attrs={'cols': 77, 'rows':15}),
+            'release_notes' : forms.Textarea(attrs={'cols': 77, 'rows':15}),
+            #'fw_info' : forms.Textarea(attrs={'cols': 77, 'rows':8}),
+            'assigned_to': forms.TextInput(attrs={'readonly': True,'size':20}),
+            'created_by': forms.TextInput(attrs={'readonly': True}),
+            'curent_state': forms.TextInput(attrs={'readonly': True}),
+        }
+VerReleaseHelpMsg = ['发布前点击\'更新信息\'按钮更新版本信息，发布后点击\'发布\'按钮，随后信息归档，不可更改']
 ############################################################################################################################################################
 PRJ_NAME_LIST = [
      'improvement', 'device_card', 'giant_maintain', 'issue_track', 'ESS_OrderSupport',
-     'ESS_CustomerIssue', 'ESS_SupplySpport', 'ESS_MasterBranchSync', 'ESS_LeftBugSolve'
+     'ESS_CustomerIssue', 'ESS_SupplySpport', 'ESS_MasterBranchSync', 'ESS_LeftBugSolve',
+     'VerRelease'
 ]
 FormAndModelDict = {
     'improvement':{'PrjNameZh':'改进建议','PrjModelClass':NameModel,'PrjFormClass':NameForm,'help_msg':helpmsg_imprvmt},
@@ -460,5 +489,6 @@ FormAndModelDict = {
     'ESS_CustomerIssue':{'PrjNameZh':'OAK_ESS客诉问题','PrjModelClass':ESS_CustomerIssueModel,'PrjFormClass':ESS_CustomerIssueForm},
     'ESS_SupplySpport':{'PrjNameZh':'OAK_ESS供货支持','PrjModelClass':ESS_SupplySpportModel,'PrjFormClass':ESS_SupplySpportForm},
     'ESS_MasterBranchSync':{'PrjNameZh':'OAK_ESS主线同步','PrjModelClass':ESS_MasterBranchSyncModel,'PrjFormClass':ESS_MasterBranchSyncForm},
-    'ESS_LeftBugSolve':{'PrjNameZh':'OAK_ESS遗留BUG解决','PrjModelClass':ESS_LeftBugSolveModel,'PrjFormClass':ESS_LeftBugSolveForm,'help_msg':help_msg}
+    'ESS_LeftBugSolve':{'PrjNameZh':'OAK_ESS遗留BUG解决','PrjModelClass':ESS_LeftBugSolveModel,'PrjFormClass':ESS_LeftBugSolveForm,'help_msg':help_msg},
+    'VerRelease':{'PrjNameZh':'转测版本记录','PrjModelClass':VerReleaseModel,'PrjFormClass':VerReleaseForm, 'help_msg':VerReleaseHelpMsg}
 }

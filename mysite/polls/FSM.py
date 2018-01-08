@@ -68,6 +68,14 @@ FSM_TRANS_ESS_ORDER_SUPPORT = [
 ]
 
 ############################################################################################################################################################
+#OAK_ESS早期支持策略_订单支持
+FSM_TRANS_VERSION_RELEASE = [
+    {'source': '未发布',	'trigger': '更新信息',	'dest': '未发布', 'trans_condition':{},   'trans_action':{}},
+    {'source': '打开',	        'trigger': '更新信息',	'dest': '未发布', 'trans_condition':{},   'trans_action':{}},
+    {'source': '未发布',	'trigger': '发布',	'dest': '已发布', 'trans_condition':{},   'trans_action':{}}
+]
+
+############################################################################################################################################################
 #定义各个项目对应的状态转换表
 TRANS_TABLE_DICT = {
     'improvement':FSM_TRANS_TABLE,
@@ -78,7 +86,8 @@ TRANS_TABLE_DICT = {
     'ESS_SupplySpport':FSM_TRANS_ESS_ORDER_SUPPORT,
     'ESS_CustomerIssue':FSM_TRANS_ESS_ORDER_SUPPORT,
     'ESS_MasterBranchSync':FSM_TRANS_ESS_ORDER_SUPPORT,
-    'ESS_LeftBugSolve':FSM_TRANS_ESS_ORDER_SUPPORT
+    'ESS_LeftBugSolve':FSM_TRANS_ESS_ORDER_SUPPORT,
+    'VerRelease':FSM_TRANS_VERSION_RELEASE,
 }
 ############################################################################################################################################################
 class FsmStateTrans(object):
