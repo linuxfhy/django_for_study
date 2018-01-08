@@ -447,14 +447,14 @@ help_msg = ['帮助信息：','段落一','段落二','段落三']
 ############################################################################################################################################################
 #OAK_版本发布
 release_note_msg="##此处按小组填写版本release notes##\n【Driver】:\n1.xxx\n2.xxx\n【EN】:\n1.xxx\n2.xxx\n"
-#fw_ver_info="【BIOS】:\n【8733】:\n【8796】:\n【BMC】:\n【NODE_CPLD】:\n【CMC】:\n【CMC_CPLD】:\n"
+fw_ver_info="【BIOS】:\n【8733】:\n【8796】:\n【BMC】:\n【NODE_CPLD】:\n【CMC】:\n【CMC_CPLD】:\n"
 class VerReleaseModel(models.Model):
     summary = models.CharField(max_length=200, verbose_name="版本号")
     commit_id = models.CharField(max_length=200, verbose_name="git_commit_id")
     release_date = models.DateField(max_length=2000, verbose_name="发布日期", default=timezone.now)
     build_info = models.CharField(max_length=9000, verbose_name="构建信息",default="##此处填写构建信息，可从上一个版本拷贝进行修改##")
     release_notes = models.CharField(max_length=9000, verbose_name="release_notes",default=release_note_msg)
-    #fw_info = models.CharField(max_length=900, verbose_name="固件信息",default=fw_ver_info)
+    fw_info = models.CharField(max_length=900, verbose_name="固件信息",default=fw_ver_info)
     assigned_to   = models.CharField(max_length=200, default="anyone", verbose_name="当前处理人(只读)")
     created_by = models.CharField(max_length=200, default="", verbose_name="创建人(只读)")
     curent_state = models.CharField(max_length=200, verbose_name="当前状态(只读)")
@@ -468,7 +468,7 @@ class VerReleaseForm(ModelForm):
             'commit_id' : forms.TextInput(attrs={'size':68}),
             'build_info' : forms.Textarea(attrs={'cols': 77, 'rows':15}),
             'release_notes' : forms.Textarea(attrs={'cols': 77, 'rows':15}),
-            #'fw_info' : forms.Textarea(attrs={'cols': 77, 'rows':8}),
+            'fw_info' : forms.Textarea(attrs={'cols': 77, 'rows':8}),
             'assigned_to': forms.TextInput(attrs={'readonly': True,'size':20}),
             'created_by': forms.TextInput(attrs={'readonly': True}),
             'curent_state': forms.TextInput(attrs={'readonly': True}),
