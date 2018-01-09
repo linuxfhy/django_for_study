@@ -544,9 +544,15 @@ def flow_file_download(request):
     response['Content-Type'] = 'application/octet-stream'
     response['Content-Disposition'] = 'attachment;filename="{0}"'.format('README.pdf') #(file_name)
     return response
-##############################For Download File:End  ##############################
-
-
-
-
-
+##############################For Manage UserInfo ##############################
+def flowuserinfo(request):
+    class AltePswdForm(forms.Form):
+        username = forms.CharField(label='用户名')
+        oldpswd = forms.CharField(label='原密码', widget = forms.PasswordInput)
+        newpswd = forms.CharField(label='新密码', widget = forms.PasswordInput)
+        confirmpaswd = forms.CharField(label='再次输入新密码', widget = forms.PasswordInput)
+    if request.method == 'POST':
+        pass
+    else: #request.method == 'GET'
+        altepswdform = AltePswdForm()
+        return render(request, 'polls/flowuserinfo.html',{'altepswdform':altepswdform})

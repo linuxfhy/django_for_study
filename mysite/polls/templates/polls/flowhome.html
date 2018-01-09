@@ -18,7 +18,11 @@ html,body,.parent{height: 100%; overflow: hidden;}
             <table>
                 {% csrf_token %}
                 {% if username %}
-                    <tr><td>Hello, {{ username }}</td><td>【<a href="{% url 'polls:flowlogout' %}">注销</a>】</td></tr>
+                    <tr>
+                        <td>Hello, {{ username }}</td>
+                        <td>【<a href="{% url 'polls:flowlogout' %}">注销</a>】</td>
+                        <td>【<a href="{% url 'polls:flowuserinfo' %}">个人信息</a>】</td>
+                    </tr>
                 {% else %}
                     <ol>
                         <li>请先<a href="{% url 'polls:flowlogin' %}">登录</a>；</li>

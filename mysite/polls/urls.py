@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^regist/$', views.flowregist, name='flowregist'),
     url(r'^login/$', views.flowlogin, name='flowlogin'),
     url(r'^logout/$', views.flowlogout, name='flowlogout'),
+    url(r'^userinfo/$', views.flowuserinfo, name='flowuserinfo'),
     url(r'^down_help_doc/$', views.flow_file_download, name='down_help_doc'),
     url(r'^home/$', views.flowhome, name='flowhome')
 ]
