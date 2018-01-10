@@ -550,9 +550,24 @@ def flowuserinfo(request):
         username = forms.CharField(label='用户名')
         oldpswd = forms.CharField(label='原密码', widget = forms.PasswordInput)
         newpswd = forms.CharField(label='新密码', widget = forms.PasswordInput)
-        confirmpaswd = forms.CharField(label='再次输入新密码', widget = forms.PasswordInput)
+        confirmpswd = forms.CharField(label='再次输入新密码', widget = forms.PasswordInput)
     if request.method == 'POST':
-        pass
+        altepswdform = AltePswdForm(request.POST)
+        if altepswdform.is_valid():
+            username = altepswdform.cleaned_data['username']
+            password = altepswdform.cleaned_data['oldpswd']
+            newpswd = altepswdform.cleaned_data['newpswd']
+            confirmpswd = altepswdform.cleaned_data['confirmpswd']
+            if newpswd != confirmpswd:
+                return HttpResponse('两次输入的新密码不一致，请返回重新输入')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                u = User.objects.get(username__exact=username)
+                u.set_password(newpswd)
+                u.save()
+                return HttpResponse('密码修改成功')
+            else:
+                return HttpResponse('用户名密码不匹配，请重新输入')
     else: #request.method == 'GET'
         altepswdform = AltePswdForm()
         return render(request, 'polls/flowuserinfo.html',{'altepswdform':altepswdform})
