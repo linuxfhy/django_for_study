@@ -11,6 +11,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from django import forms
+from django.db import models
 
 from django.http import HttpResponse, StreamingHttpResponse
 from xlwt import *
@@ -161,7 +162,12 @@ def excute_trans_action(request, model_instance, after_trans_action):
                 return {'func_rc':False, 'error_message':'无法将<'+field_1+'>设置为:'+attr_value+'，系统无此字段'}
     return{'func_rc':True}
 
-def myflowdetail(request, model_id, prj_name='improvement'):
+def handle_uploaded_file(file_instance):
+    with open('testuploadfile.txt', 'wb+') as destination:
+        for chunk in file_instance.chunks():
+            destination.write(chunk)
+
+def  myflowdetail(request, model_id, prj_name='improvement'):
     if not request.user.is_authenticated():
         return render(request, 'polls/flowhome.html')
     else:
@@ -170,7 +176,19 @@ def myflowdetail(request, model_id, prj_name='improvement'):
         GenericForm = FormAndModelDict[prj_name]['PrjFormClass']
         if request.method == 'POST':
             model_instance = GenericModel.objects.get(pk=model_id)
-            form_instance = GenericForm(request.POST, instance=model_instance)
+            has_filefield = False
+            for field in GenericModel._meta.get_fields():
+                if isinstance(field, models.FileField):
+                    has_filefield = True
+                    break
+            if has_filefield:
+                print('line 185')
+                form_instance = GenericForm(request.POST, request.FILES, instance=model_instance)
+                file_list = request.FILES.getlist('attachedfile')
+                for flie_instance in file_list:
+                    handle_uploaded_file(file_instance)
+            else:
+                form_instance = GenericForm(request.POST, instance=model_instance)
             #Done:Add code for state trans here
             form_instance.save()
             trigger = request.POST['trigger']
