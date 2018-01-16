@@ -1,0 +1,23 @@
+uwsgi --http :8001 --chdir /root/.virtualenvs/webapps/django_for_study/mysite --wsgi-file /root/.virtualenvs/webapps/django_for_study/mysite/mysite/wsgi.py --master --processes 4 --threads 2 --stats 127.0.0.1:9191
+
+
+/root/.virtualenvs/webapps/django_for_study/mysite
+
+curl 127.0.0.1:8080/polls/1/flow/home
+
+
+
+
+
+
+
+#                                                           BUS  Addr cnt off_h off_l data....
+#ipmitool -H 192.168.200.42 -U admin -P admin raw 0x06 0x52 0x0B 0xA0 0x00 0x2F 0x60 0x31 0x38 0x31 0x35
+#ipmitool -H 192.168.200.42 -U admin -P admin raw 0x06 0x52 0x0B 0xA0 0x00 0x2F 0x64 0x4C 0x30 0x3${cpu_countt}
+
+
+
+
+
+ipmitool -H 192.168.200.42 -U admin -P admin raw 0x06 0x52 0x0B 0xA0 0x04
+ipmitool -H 192.168.200.42 -U admin -P admin raw 0x06 0x52 0x0B 0xA0 0x03
