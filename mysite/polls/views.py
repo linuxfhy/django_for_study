@@ -12,6 +12,7 @@ from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from django import forms
 from django.db import models
+from django.conf import settings
 
 from django.http import HttpResponse, StreamingHttpResponse
 from xlwt import *
@@ -180,7 +181,11 @@ def  myflowdetail(request, model_id, prj_name='improvement'):
             for field in GenericModel._meta.get_fields():
                 if isinstance(field, models.FileField):
                     has_filefield = True
-                    break
+                    upload_dir = 'djangofile/'+prj_name+'/' #+model_id+'/'
+                    field.upload_to = upload_dir
+                    full_dir = settings.MEDIA_ROOT+upload_dir
+                    if not  os.path.exists(full_dir):
+                        os.makedirs(full_dir)#TODO:创建目录
             if has_filefield:
                 form_instance = GenericForm(request.POST, request.FILES, instance=model_instance)
                 #file_list = request.FILES.getlist('attachedfile')
@@ -519,9 +524,9 @@ def flow_export_excel(request, prj_name='improvement'):
         row_number = row_number + 1
     filename = prj_name+'.xls'
     exist_file = os.path.exists(filename)
-    if exist_file:
-        os.remove(filename)
-    ws.save(filename)
+    #if exist_file:
+    #    os.remove(filename)
+    #ws.save(filename)
     ############################
     sio = BytesIO()
     ws.save(sio)
