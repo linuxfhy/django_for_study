@@ -182,11 +182,10 @@ def  myflowdetail(request, model_id, prj_name='improvement'):
                     has_filefield = True
                     break
             if has_filefield:
-                print('line 185')
                 form_instance = GenericForm(request.POST, request.FILES, instance=model_instance)
-                file_list = request.FILES.getlist('attachedfile')
-                for file_instance in file_list:
-                    handle_uploaded_file(file_instance)
+                #file_list = request.FILES.getlist('attachedfile')
+                #for file_instance in file_list:
+                #    handle_uploaded_file(file_instance)
             else:
                 form_instance = GenericForm(request.POST, instance=model_instance)
             #Done:Add code for state trans here
