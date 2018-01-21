@@ -268,7 +268,7 @@ class IssueTrackModel(models.Model):
     issue_processor = models.CharField(max_length=200, default="#提交人填写#", verbose_name="维护处理人")
     issue_checkor = models.CharField(max_length=200, default="#维护处理人指定#", verbose_name="维护代表")
     issue_se = models.CharField(max_length=200, default="#维护代表指定#", verbose_name="改进提取SE")
-    attachedfile = models.FileField(upload_to='djangofile/', verbose_name="附件")
+    attachedfile = models.FileField(upload_to='djangofile/', verbose_name="附件", null=True, blank=True)
     assigned_to   = models.CharField(max_length=200, default="", verbose_name="当前处理人(只读)")
     created_by = models.CharField(max_length=200, default="", verbose_name="创建人(只读)")
     curent_state = models.CharField(max_length=200, verbose_name="当前状态(只读)")

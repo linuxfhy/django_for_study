@@ -181,7 +181,7 @@ def  myflowdetail(request, model_id, prj_name='improvement'):
             for field in GenericModel._meta.get_fields():
                 if isinstance(field, models.FileField):
                     has_filefield = True
-                    upload_dir = 'djangofile/'+prj_name+'/' #+model_id+'/'
+                    upload_dir = 'djangofile/'+prj_name+'/'+model_id+'/'
                     field.upload_to = upload_dir
                     full_dir = settings.MEDIA_ROOT+upload_dir
                     if not  os.path.exists(full_dir):
@@ -243,39 +243,46 @@ def  myflowdetail(request, model_id, prj_name='improvement'):
             #return HttpResponse("hello")
 
 def flow_create_question(request, prj_name='improvement'):
-    #print('enter my flow ,project name is %s'%prj_name)
+    # create a form instance and populate it with data from the request:
+    GenericForm = FormAndModelDict[prj_name]['PrjFormClass']
+    GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
+    model_instance = GenericModel()
+
     if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        GenericForm = FormAndModelDict[prj_name]['PrjFormClass']
-        form = GenericForm(request.POST)
-        # check whether it's valid:
+        model_instance.save() #save one time for get model_instance.id
+        model_id = str(model_instance.id)
+        for field in GenericModel._meta.get_fields():
+            if isinstance(field, models.FileField):
+                has_filefield = True
+                upload_dir = 'djangofile/'+prj_name+'/'+model_id+'/'
+                field.upload_to = upload_dir
+                full_dir = settings.MEDIA_ROOT+upload_dir
+                if not  os.path.exists(full_dir):
+                    os.makedirs(full_dir)#TODO:创建目录
+        if has_filefield:
+            form = GenericForm(request.POST, request.FILES, instance=model_instance)
+            #file_list = request.FILES.getlist('attachedfile')
+            #for file_instance in file_list:
+            #    handle_uploaded_file(file_instance)
+        else:
+            form = GenericForm(request.POST)
+
+
         if form.is_valid():
             #TODO:check model field and database colum
             model_instance = form.save()
-            #return HttpResponse("Hello, world. Thanks for submit.")
-            #return HttpResponseRedirect(reverse('polls:PrjIndexForCurUser', kwargs={'prj_name':prj_name}))
-            return HttpResponseRedirect(reverse('polls:flowdetail', kwargs={'prj_name':prj_name,'model_id':model_instance.id}))
-    # if a GET (or any other method) we'll create a blank form
+            return HttpResponseRedirect(reverse('polls:flowdetail', kwargs={'prj_name':prj_name,'model_id':model_id}))
     else:
         cur_user = request.user
         if not cur_user.is_authenticated():
             return HttpResponse('无权限，请先注册登录')#DONE:return 403 error
-
         exec_perm_str = 'polls.'+prj_name+'_'+AuthDict['使用权限']
-
         if not cur_user.has_perm(exec_perm_str):
             return HttpResponse('没有创建权限%s，请联系该项目管理员'%exec_perm_str)
-
- 
         workflowfsm = WorkFlowFSM(prj_name=prj_name)
         init_state = workflowfsm.FSM_get_init_state() 
         current_user = request.user.username
         #根据项目不同，产生不同的NameForm，学习为下拉框类型字段添加内容，用于增加项目
-        GenericModel = FormAndModelDict[prj_name]['PrjModelClass']
-        GenericForm = FormAndModelDict[prj_name]['PrjFormClass']
-        #print('GET method ,ZH project name is %s'%FormAndModelDict[prj_name]['PrjNameZh'])
-        #print('project name is %s'%FormAndModelDict[prj_name]['prjname'])
-        model_instance = GenericModel()
         if model_instance.assigned_to == 'anyone':
             assigned_to = 'anyone'
         else:
