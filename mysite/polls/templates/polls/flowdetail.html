@@ -1,26 +1,46 @@
-<form enctype="multipart/form-data"  action="{% url 'polls:flowdetail' prj_name model_id %}" method="post" >
-<p>【当前项目】{{ PrjNameZh }}【ID】Item_{{ model_id }}</p>
+{% load static %}
 
-<table>
-    {% csrf_token %}
-    {% for field in form %}
-        <!--<div class="fieldWrapper">-->
-        <tr>
-            <td>【{{ field.label_tag }}】</td>
-            <td> {{ field }}</td>
-        </tr>
-        {% if field.help_text %}
-        <tr><td></td><td>{{ field.help_text }}</td></tr>
+
+<style type="text/css">
+html,body,.parent{height: 100%; overflow: hidden;}
+        .top{position: absolute; top: 0; left: 0; right: 0; height: 0; background-color: #F3F3FA; height: 50px;}
+        .left{position: absolute; top: 50px; left: 0;bottom: 50px; width: 75%; background-color: #E0E0E0;overflow:auto;}
+        .right{position: absolute; top: 50px; left: 75%; right: 0; bottom: 50px; background-color: #FFFFCE; overflow: hidden;}
+        .bottom{position: absolute; left: 0; right: 0; bottom: 0; height: 50px; background-color: #F3F3FA;}
+</style>
+<div class="parent">
+    <div class="top">
+        <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}" />
+        <p>【TaskSteper】积跬步，至千里</p>
+    </div>
+    <div class="left">
+
+        <form enctype="multipart/form-data"  action="{% url 'polls:flowdetail' prj_name model_id %}" method="post" >
+        <p>【当前项目】{{ PrjNameZh }}【ID】Item_{{ model_id }}</p>
+        <table>
+            {% csrf_token %}
+            {% for field in form %}
+                <!--<div class="fieldWrapper">-->
+                <tr>
+                    <td>【{{ field.label_tag }}】</td>
+                    <td> {{ field }}</td>
+                </tr>
+                {% if field.help_text %}
+                <tr><td></td><td>{{ field.help_text }}</td></tr>
+                {% endif %}
+                <!--</div>-->
+            {% endfor %}
+        </table>
+        {% if trigger %}
+            {% for elmt in trigger %}
+                <input type="submit" value={{elmt}} name='trigger' />
+            {% endfor %}
         {% endif %}
-        <!--</div>-->
-    {% endfor %}
-</table>
-{% if trigger %}
-    {% for elmt in trigger %}
-        <input type="submit" value={{elmt}} name='trigger' />
-    {% endfor %}
-{% endif %}
-</form>
-<li><a href="{% url 'polls:flowhome' %}">返回首页</a></li>
-<li><a href="{% url 'polls:flowprjhome' prj_name %}">返回项目首页</a></li>
-
+        </form>
+        <li><a href="{% url 'polls:flowhome' %}">返回首页</a></li>
+        <li><a href="{% url 'polls:flowprjhome' prj_name %}">返回项目首页</a></li>
+    </div>
+    <div class="right">
+    </div>
+    <div class="bottom">bottom</div>
+</div>

@@ -249,8 +249,9 @@ def flow_create_question(request, prj_name='improvement'):
     model_instance = GenericModel()
 
     if request.method == 'POST':
-        model_instance.save() #save one time for get model_instance.id
+        model_instance.save() #save one time for getting model_instance.id
         model_id = str(model_instance.id)
+        has_filefield = False
         for field in GenericModel._meta.get_fields():
             if isinstance(field, models.FileField):
                 has_filefield = True
@@ -265,7 +266,7 @@ def flow_create_question(request, prj_name='improvement'):
             #for file_instance in file_list:
             #    handle_uploaded_file(file_instance)
         else:
-            form = GenericForm(request.POST)
+            form = GenericForm(request.POST, instance=model_instance)
 
 
         if form.is_valid():
