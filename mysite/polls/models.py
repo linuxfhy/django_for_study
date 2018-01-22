@@ -475,11 +475,52 @@ class VerReleaseForm(ModelForm):
             'curent_state': forms.TextInput(attrs={'readonly': True}),
         }
 VerReleaseHelpMsg = ['发布前点击\'更新信息\'按钮更新版本信息，发布后点击\'发布\'按钮，随后信息归档，不可更改']
+
+############################################################################################################################################################
+#待办事项
+class TodolistModel(models.Model):
+    summary = models.CharField(max_length=200, verbose_name="概要")
+    detail = models.CharField(max_length=5000, verbose_name="详细描述")
+    current_process = models.CharField(max_length=5000, verbose_name="处理进展",default="##此处填写进展##")
+    assigned_to   = models.CharField(max_length=200, default="", verbose_name="当前处理人(只读)")
+    created_by = models.CharField(max_length=200, default="", verbose_name="创建人(只读)")
+    curent_state = models.CharField(max_length=200, verbose_name="当前状态(只读)")
+
+class TodolistForm(ModelForm):
+    class Meta:
+        model = TodolistModel
+        fields = '__all__'
+        widgets = {
+            'summary' : forms.TextInput(attrs={'size':79}),
+            'current_process' : forms.Textarea(attrs={'cols': 80, 'rows': 5}),
+            #'viewer_advice' : forms.Textarea(attrs={'cols': 80, 'rows': 5}),
+            'detail' : forms.Textarea(attrs={'cols': 80, 'rows': 5}),
+            'assigned_to': forms.TextInput(attrs={'readonly': True,'size':20}),
+            'created_by': forms.TextInput(attrs={'readonly': True}),
+            'curent_state': forms.TextInput(attrs={'readonly': True}),
+        }
+helpmsg_totolist = [
+    '【主干流程说明】:',
+    '##{{环节，责任人}}##',
+    '##<触发条件>##',
+    '{{打开,创建人}}',
+    '<提交评审>',
+    '{{改进建议价值评审,改进建议评审人}}',
+    '<指定实施人>',
+    '{{改进建议实施,改建建议实施人}}',
+    '<实施结果提交评审>',
+    '{{实施结果评审,改进建议评审人}}',
+    '<落地关闭>',
+    '{{关闭}}'
+]
+
+
+
 ############################################################################################################################################################
 PRJ_NAME_LIST = [
      'improvement', 'device_card', 'giant_maintain', 'issue_track', 'ESS_OrderSupport',
      'ESS_CustomerIssue', 'ESS_SupplySpport', 'ESS_MasterBranchSync', 'ESS_LeftBugSolve',
-     'VerRelease'
+     'VerRelease','Todolist'
 ]
 FormAndModelDict = {
     'improvement':{'PrjNameZh':'改进建议','PrjModelClass':NameModel,'PrjFormClass':NameForm,'help_msg':helpmsg_imprvmt},
@@ -491,5 +532,6 @@ FormAndModelDict = {
     'ESS_SupplySpport':{'PrjNameZh':'OAK_ESS供货支持','PrjModelClass':ESS_SupplySpportModel,'PrjFormClass':ESS_SupplySpportForm},
     'ESS_MasterBranchSync':{'PrjNameZh':'OAK_ESS主线同步','PrjModelClass':ESS_MasterBranchSyncModel,'PrjFormClass':ESS_MasterBranchSyncForm},
     'ESS_LeftBugSolve':{'PrjNameZh':'OAK_ESS遗留BUG解决','PrjModelClass':ESS_LeftBugSolveModel,'PrjFormClass':ESS_LeftBugSolveForm,'help_msg':help_msg},
-    'VerRelease':{'PrjNameZh':'转测版本记录','PrjModelClass':VerReleaseModel,'PrjFormClass':VerReleaseForm, 'help_msg':VerReleaseHelpMsg}
+    'VerRelease':{'PrjNameZh':'转测版本记录','PrjModelClass':VerReleaseModel,'PrjFormClass':VerReleaseForm, 'help_msg':VerReleaseHelpMsg},
+    'Todolist':{'PrjNameZh':'待办事项处理','PrjModelClass':TodolistModel,'PrjFormClass':TodolistForm} #, 'help_msg':VerReleaseHelpMsg}
 }

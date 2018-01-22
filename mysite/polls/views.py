@@ -488,7 +488,8 @@ def flowregist(request, prj_name='Null'):
                 return HttpResponseRedirect(reverse('polls:flowlogin'))
             else:
                 if userinfo:
-                    return HttpResponse('User name %s has been occupied, please contact the project administrator for authority'%username)
+                    return HttpResponse('用户名:%s 已被占用，请联系项目管理员分配权限'%username)
+                    #return HttpResponse('User name %s has been occupied, please contact the project administrator for authority'%username)
                 user = User.objects.create_user(username, email, password)
                 user.save()
                 group_name_EN = GrpDict['注册用户群组']

@@ -66,14 +66,20 @@ FSM_TRANS_ESS_ORDER_SUPPORT = [
     {'source': '打开',	'trigger': '更新进展',	'dest': '打开', 'trans_condition':{},   'trans_action':{}},
     {'source': '打开',	'trigger': '关闭',	'dest': '关闭', 'trans_condition':{},   'trans_action':{}}
 ]
-
 ############################################################################################################################################################
 #OAK_ESS早期支持策略_订单支持
 FSM_TRANS_VERSION_RELEASE = [
-    {'source': '未发布',	'trigger': '更新信息',	'dest': '未发布', 'trans_condition':{},   'trans_action':{}},
-    {'source': '打开',	        'trigger': '更新信息',	'dest': '未发布', 'trans_condition':{},   'trans_action':{}},
-    {'source': '未发布',	'trigger': '发布',	'dest': '已发布', 'trans_condition':{},   'trans_action':{}}
+    {'source': '未发布',  'trigger': '更新信息',      'dest': '未发布', 'trans_condition':{},   'trans_action':{}},
+    {'source': '打开',           'trigger': '更新信息',      'dest': '未发布', 'trans_condition':{},   'trans_action':{}},
+    {'source': '未发布',  'trigger': '发布',        'dest': '已发布', 'trans_condition':{},   'trans_action':{}}
 ]
+############################################################################################################################################################
+#待办事项
+FSM_TRANS_TODOLIST = [
+    {'source': '打开',	'trigger': '更新信息',	'dest': '打开',   'trans_condition':{},   'trans_action':{}},
+    {'source': '打开',	'trigger': '关闭',	'dest': '关闭',   'trans_condition':{},   'trans_action':{}}
+]
+############################################################################################################################################################
 
 ############################################################################################################################################################
 #定义各个项目对应的状态转换表
@@ -88,6 +94,7 @@ TRANS_TABLE_DICT = {
     'ESS_MasterBranchSync':FSM_TRANS_ESS_ORDER_SUPPORT,
     'ESS_LeftBugSolve':FSM_TRANS_ESS_ORDER_SUPPORT,
     'VerRelease':FSM_TRANS_VERSION_RELEASE,
+    'Todolist':FSM_TRANS_TODOLIST,
 }
 ############################################################################################################################################################
 class FsmStateTrans(object):
