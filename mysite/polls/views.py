@@ -575,6 +575,24 @@ def flow_file_download(request):
     response['Content-Type'] = 'application/octet-stream'
     response['Content-Disposition'] = 'attachment;filename="{0}"'.format('README.pdf') #(file_name)
     return response
+
+
+def generic_down_load(request, prj_name, model_id, path_file):
+    def file_iterator(file_name, chunk_size=512):
+        with open(file_name,'rb') as f:
+            while True:
+                c = f.read(chunk_size)
+                if c:
+                    yield c
+                else:
+                    break
+    path_file = settings.MEDIA_ROOT + path_file
+    response = StreamingHttpResponse(file_iterator(path_file))
+    response['Content-Type'] = 'application/octet-stream'
+    response['Content-Disposition'] = 'attachment'
+    return response
+
+
 ##############################For Manage UserInfo ##############################
 def flowuserinfo(request):
     class AltePswdForm(forms.Form):

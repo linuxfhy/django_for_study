@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^(?P<prj_name>[a-zA-Z0-9_]+)/exportdata/$', views.flow_export_excel, name='flowprjexport'),
     url(r'^(?P<prj_name>[a-zA-Z0-9_]+)/muti__process/$', views.flow_muti_item_process, name='flow_muti_item_process'),
     url(r'^(?P<prj_name>[a-zA-Z0-9_]+)/(?P<model_id>[0-9]+)/detail/$', views.myflowdetail, name='flowdetail'),
+    url(r'^(?P<prj_name>[a-zA-Z0-9_]+)/(?P<model_id>[0-9]+)/detail/(?P<path_file>[^$]*)$', views.generic_down_load, name='flowgenericdownload'),
     url(r'^tmp/$', views.myflowprocess, name='myflowprocess'),
     url(r'^regist/$', views.flowregist, name='flowregist'),
     url(r'^login/$', views.flowlogin, name='flowlogin'),
