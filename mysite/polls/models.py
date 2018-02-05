@@ -198,6 +198,9 @@ CHOICE_CUSTOMER_TYPE = (
     ('nengyuan','能源'),
     ('guangdian','广电'),
     ('meizi','媒资'),
+    ('tezhong','特种行业'),
+    ('neibu','内部客户'),
+    ('其他','其他'),
 )
 
 CHOICE_ISSUE_CLASS_1 = (
@@ -206,6 +209,8 @@ CHOICE_ISSUE_CLASS_1 = (
     ('结构','结构'),
     ('误操作','误操作'),
     ('配置','配置'),
+    ('兼容性','兼容性'),
+    ('沟通协作','沟通协作'),
 )
 CHOICE_ISSUE_LEVEL = (
     ('一级事故','一级事故'),
@@ -224,6 +229,8 @@ CHOICE_ISSUE_CLASS_2 = (
     ('软件', (
             ('FC', 'FC'),
             ('SAS', 'SAS'),
+            ('固件', '固件'),
+            ('压缩', '压缩'),
         )
     ),
     ('硬件', (
@@ -235,6 +242,8 @@ CHOICE_ISSUE_CLASS_2 = (
     ('误操作', '误操作'),
     ('结构', '结构'),
     ('配置', '配置'),
+    ('兼容性','兼容性'),
+    ('沟通协作', '沟通协作'),
 )
 
 
@@ -242,6 +251,8 @@ RESPONSE_FIELD_CHOICES = (
     ('软件', (
             ('FC', 'FC'),
             ('SAS', 'SAS'),
+            ('固件', '固件'),
+            ('压缩', '压缩'),
         )
     ),
     ('硬件', (
@@ -250,8 +261,6 @@ RESPONSE_FIELD_CHOICES = (
             ('线缆', '线缆'),
         )
     ),
-    ('误操作', '误操作'),
-    ('配置', '配置'),
 )
 class IssueTrackModel(models.Model):
     summary = models.CharField(max_length=200, verbose_name="概要", default="【20170101】XX局点XX设备发生XX问题")
